@@ -1,0 +1,5 @@
+user_agent_alias  = 'Linux Mozilla'
+login_page        = 'http://vk.com'
+
+email             = 'example@example.com'
+password          = 'password'

@@ -1,38 +1,27 @@
 # Group spambot:
 
->>email   - your login email  
-password  - your login password  
-page      - target page, for example: http://vk.com/club19150223  
-hash      - target group hash, can be found with JS command "console.log(cur.options.post_hash);" on group page, for example: 9c1c8307f8626074bf  
-message   - your spam message  
-count     - how many messages to send at once (max value - 8)  
-interval  - 0/1 if 1, than takes time interval from discussion_cfg (number + s/m/h/d), for example: 30s or 10m or 2m10s  
-
-rake spam:group email=your_email@derp.com password=fuck_da_police count=1 interval=0  
+>>email/phone - your login email or phone  
+password      - your login password  
+page          - target page, for example: http://vk.com/club19150223  
+hash          - target group hash, can be found with JS command "console.log(cur.options.post_hash);" on group page, for example: 9c1c8307f8626074bf  
+message       - your spam message  
+count         - how many messages to send at once 1-8  
+interval      - repeat time interval 1-60 minutes  
 
 # Group discussion spambot:
 
->>email   - your login email  
-password  - your login password  
-page      - target page, for example: http://vk.com/topic-33125365_25989232  
-hash      - target group hash, can be found with JS command "console.log(cur.hash);" on group discussion page, for example: bd34dc44da09a4a714  
-message   - your spam message  
-count     - how many messages to send at once (max value - 8)  
-interval  - 0/1 if 1, than takes time interval from group_cfg (number + s/m/h/d), for example: 30s or 10m or 2m10s  
-
-rake spam:discussion email=your_email@derp.com password=fuck_da_police count=1 interval=1  
-
-rake spam:discussion email=your_email@derp.com password=fuck_da_police count=1 interval=1 message="Fuck\n\nda\n\npolice" page="http://vk.com/topic-33125365_25989232" hash="bd34dc44da09a4a714"  
+>>email/phone - your login email or phone  
+password      - your login password  
+page          - target page, for example: http://vk.com/topic-33125365_25989232  
+hash          - target group discussion hash, can be found with JS command "console.log(cur.hash);" on group discussion page, for example: bd34dc44da09a4a714  
+message       - your spam message  
+count         - how many messages to send at once 1-8  
+interval      - repeat time interval 1-60 minutes  
 
 # Bot configuration (bot_cfg):
 
 >>user_agent_alias = 'Linux Mozilla'  
 login_page         = 'http://vk.com'  
-
-### your VK login email and password, to run rake task, without typing them 
-
->>email           = 'example@example.com'  
-password          = 'password'  
 
 # Mechanize user_agent_alias:
 

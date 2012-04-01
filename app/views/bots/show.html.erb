@@ -1,0 +1,54 @@
+<p id="notice"><%= notice %></p>
+<script>
+  function run(id) {
+    $.post('/run', { id : id }, function(result){
+      $('#run_bot_responses').text('| ' + result.state);
+    })
+  }
+
+  function stop(id) {
+    $.post('/stop', { id : id }, function(result){
+      $('#stop_bot_responses').text('| ' + result.state);
+    })
+  }
+</script>
+
+<%= link_to "Run", '#', :onclick => 'run("' + @bot.id.to_s + '"); return false;' %>&nbsp;<span id="run_bot_responses"></span><br/>
+<%= link_to "Stop", '#', :onclick => 'stop("' + @bot.id.to_s + '"); return false;' %>&nbsp;<span id="stop_bot_responses"></span><br/>
+<br/>
+<p>
+  <b>Email/Phone:</b>
+  <%= @bot.email %>
+</p>
+
+<p>
+  <b>Bot type:</b>
+  <%= @bot.bot_type %>
+</p>
+
+<p>
+  <b>Page:</b>
+  <%= @bot.page %>
+</p>
+
+<p>
+  <b>Page hash:</b>
+  <%= @bot.page_hash %>
+</p>
+
+<p>
+  <b>Message:</b>
+  <%= @bot.message %>
+</p>
+
+<p>
+  <b>Count:</b>
+  <%= pluralize(@bot.count, 'time') %>
+</p>
+
+<p>
+  <b>Interval:</b>
+  <%= pluralize(@bot.interval, 'minute') %>
+</p>
+<%= link_to 'Edit', edit_bot_path(@bot) %> |
+<%= link_to 'Back', bots_path %>

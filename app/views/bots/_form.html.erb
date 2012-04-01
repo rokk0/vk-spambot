@@ -1,0 +1,49 @@
+<%= form_for(@bot) do |f| %>
+  <% if @bot.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@bot.errors.count, "error") %> prohibited this bot from being saved:</h2>
+
+      <ul>
+      <% @bot.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :email_or_phone %><br />
+    <%= f.text_field :email %>
+  </div>
+  <div class="field">
+    <%= f.label :password %><br />
+    <%= f.text_field :password %>
+  </div>
+  <div class="field">
+    <%= f.label :bot_type %><br />
+    <%= f.select :bot_type, { 'group' => 'group', 'discussioin' => 'discussion'} %>
+  </div>
+  <div class="field">
+    <%= f.label :page %><br />
+    <%= f.text_field :page %>
+  </div>
+  <div class="field">
+    <%= f.label :page_hash %><br />
+    <%= f.text_field :page_hash %>
+  </div>
+  <div class="field">
+    <%= f.label :message %><br />
+    <%= f.text_area :message %>
+  </div>
+  <div class="field">
+    <%= f.label :count %><br />
+    <%= f.select :count, (1..8).step(1).to_a.map{|s| [pluralize(s, 'time'), s]} %>
+  </div>
+  <div class="field">
+    <%= f.label :interval %><br />
+    <%= f.select :interval, [['none', 0]] + (1..60).step(1).to_a.map{|s| [pluralize(s, 'minute'), s]} %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

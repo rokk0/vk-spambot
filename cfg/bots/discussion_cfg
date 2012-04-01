@@ -1,7 +1,0 @@
-wall_php  = 'http://vk.com/al_board.php'
-
-page      = 'http://vk.com/topic-33125365_25989232'
-hash      = 'bd34dc44da09a4a714'
-message   = "test"
-count     = 4
-interval  = "1m"

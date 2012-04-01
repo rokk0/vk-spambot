@@ -24,7 +24,7 @@ module Bots
       @count.times do
         @msg_count += 1
         p 'Sending discussion message #' + @msg_count.to_s
-        params[:comment] = @message + "\n\n" + rand(1000000000..9999999999).to_s
+        params[:comment] = @message + "\n\n" + (rand(9999999999) + 100000000).to_s
         @@agent.post('http://vk.com/al_board.php', params)
       end if @@logged_in
     end

@@ -31,7 +31,7 @@ module Bots
       @count.times do
         @msg_count += 1
         p 'Sending group message #' + @msg_count.to_s
-        params[:message] = @message + "\n\n" + rand(1000000000..9999999999).to_s
+        params[:message] = @message + "\n\n" + (rand(9999999999) + 100000000).to_s
         @@agent.post('http://vk.com/al_wall.php', params)
       end if @@logged_in
     end

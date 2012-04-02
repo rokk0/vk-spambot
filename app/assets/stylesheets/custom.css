@@ -166,7 +166,6 @@ div.field, div.actions {
   font-weight: bold;
   padding: 5px 5px 5px 15px;
   font-size: 12px;
-  margin: -7px;
   background-color: #c00;
   color: #fff;
 }
@@ -188,4 +187,8 @@ ul.users {
 
 .users li {
   list-style: none;
+}
+
+input[type="text"], input[type="password"], input[type="url"], input[type="email"], input.text, input.title, textarea, select {
+  margin: 0px;
 }

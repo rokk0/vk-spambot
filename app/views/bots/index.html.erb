@@ -12,7 +12,7 @@
     <th></th>
     <th></th>
   </tr>
-
+<% @user = params[:id] ? User.find(params[:id]) : current_user %>
 <% @bots.each do |bot| %>
   <tr>
     <td><%= bot.email %></td>
@@ -21,13 +21,17 @@
     <td><%= bot.count %></td>
     <td><%= bot.interval %></td>
     <td><%= bot.state %></td>
-    <td><%= link_to 'Show', bot %></td>
-    <td><%= link_to 'Edit', edit_bot_path(bot) %></td>
-    <td><%= link_to 'Destroy', bot, confirm: 'Are you sure?', method: :delete %></td>
+    <% if @user && !@user.admin? && current_user.admin? || current_user?(@user) %>
+      <td><%= link_to 'Show', bot %></td>
+      <td><%= link_to 'Edit', edit_bot_path(bot) %></td>
+      <td><%= link_to 'Destroy', bot, confirm: 'Are you sure?', method: :delete %></td>
+    <% end %>
   </tr>
 <% end unless @bots.empty? %>
 </table>
 
 <br />
+<% if @user && !@user.admin? && current_user.admin? || current_user?(@user) %>
+  <%= link_to 'New Bot', :controller => 'bots', :action => 'new', :id => params[:id] || current_user.id %>
+<% end %>
 
-<%= link_to 'New Bot', :controller => 'bots', :action => 'new', :id => params[:id] || current_user.id %>

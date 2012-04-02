@@ -5,18 +5,18 @@ require 'bots/discussion'
 #include OpenWFE
 
 class BotsController < ApplicationController
-  before_filter :admin_user, :except => [:index, :new, :create, :run, :stop]
-  before_filter :admin_user_control, :only => [:run, :stop]
+  before_filter :admin_user,          :only => [:edit, :update, :show, :destroy]
+  before_filter :admin_user_control,  :only => [:run, :stop]
+  before_filter :admin_bot_create,    :only => [:new, :create]
+  before_filter :admin_bot_update,    :only => [:edit, :update, :show]
 
   # GET /bots
   # GET /bots.json
   def index
-    begin
-      @bots = current_user.admin? && params[:id] ? User.find(params[:id]).bots : current_user.bots
-    rescue
-        flash.now[:error] = "User not found."
-        render "error"
+    if !current_user.admin? && current_user.id != params[:id].to_i 
+      flash_access_denied
     else
+      @bots = current_user.admin? && params[:id] ? User.find(params[:id]).bots : current_user.bots
       @title = "Listing bots"
 
       respond_to do |format|
@@ -24,6 +24,8 @@ class BotsController < ApplicationController
         format.json { render json: @bots }
       end
     end
+    rescue
+        flas_user_not_found
   end
 
   # GET /bots/1
@@ -89,11 +91,15 @@ class BotsController < ApplicationController
   # DELETE /bots/1
   # DELETE /bots/1.json
   def destroy
-    @bot.destroy
-
-    respond_to do |format|
-      format.html { redirect_to :controller => 'bots', :action => 'index', :id => @bot.user_id }
-      format.json { head :no_content }
+    _user = User.find(@bot.user_id)
+    if !current_user?(_user) && _user.admin? && current_user.admin?
+      flash_access_denied
+    else
+      @bot.destroy
+      respond_to do |format|
+        format.html { redirect_to :controller => 'bots', :action => 'index', :id => @bot.user_id }
+        format.json { head :no_content }
+      end
     end
   end
 
@@ -148,16 +154,45 @@ class BotsController < ApplicationController
     def admin_user
       @bot = current_user.admin? ? Bot.find(params[:id]) : current_user.bots.find(params[:id])
       rescue
-        flash.now[:error] = "Access denied."
-        render "error"
+        flash_access_denied
     end
 
     def admin_user_control
-      @bot = current_user.admin? ? Bot.find(params[:id]) : current_user.bots.find(params[:id])
+      _bot = Bot.find(params[:id])
+      @bot = current_user.admin? ? ( !User.find(_bot.user_id).admin? ? _bot : current_user.bots.find(params[:id]) ) : current_user.bots.find(params[:id])
       rescue
         respond_to do |format|
           format.json { render :json => { 'state' => 'access denied' } }
         end
+    end
+
+    def admin_bot_create
+      user = User.find(params[:id])
+      admin_bot_helper(user)
+    end
+
+    def admin_bot_update
+      bot = Bot.find(params[:id])
+      user = User.find(bot.user_id)
+      admin_bot_helper(user)
+    end
+
+    def admin_bot_helper(user)
+      if !current_user?(user) && user.admin? && current_user.admin?
+        flash_access_denied
+      end
+      rescue
+        flas_user_not_found
+    end
+
+    def flash_access_denied
+      flash.now[:error] = "Access denied."
+      render "error"
+    end
+
+    def flas_user_not_found
+      flash.now[:error] = "User not found."
+      render "error"
     end
 
 end

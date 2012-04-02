@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_filter :check_user,   :only => [:show, :update, :destroy]
+  before_filter :check_user,   :only => [:show, :edit, :update, :destroy]
   before_filter :authenticate, :only => [:index, :edit, :update, :destroy]
   before_filter :correct_user, :only => [:edit, :update]
   before_filter :admin_user,   :only => :destroy
@@ -47,8 +47,12 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    @user.destroy
-    flash.now[:success] = "User destroyed."
+    if @user.admin?
+      flash.now[:error] = "Administrator cannot be destroyed."
+    else
+      @user.destroy
+      flash.now[:success] = "User destroyed."
+    end
     redirect_to users_path
   end
 
@@ -60,7 +64,10 @@ class UsersController < ApplicationController
 
     def correct_user
       @user = User.find(params[:id])
-      redirect_to(root_path) unless current_user?(@user)
+      if !current_user?(@user) && ( !current_user.admin? || @user.admin? )
+        flash.now[:error] = "Access denied."
+        render "error"
+      end
     end
 
     def admin_user

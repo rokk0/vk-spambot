@@ -7,8 +7,10 @@
       </h1>
     </td>
     <td class="sidebar round">
-      <strong>Name</strong> <%= @user.name %><br />
-      <strong>URL</strong> <%= link_to user_path(@user), @user %><br />
+      <strong>Email</strong> <%= @user.email %><br />
+      <% if current_user?(@user) || current_user.admin? && !@user.admin? %>
+        <strong>Edit</strong> <%= link_to edit_user_path(@user), edit_user_path(@user) %><br />
+      <% end %>
       <% if current_user?(@user) || current_user.admin? %>
         <strong>Bots</strong> <%= link_to @user.bots.count, :controller => 'bots', :action => 'index', :id => @user.id %>
       <% end %>

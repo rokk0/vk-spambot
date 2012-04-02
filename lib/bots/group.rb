@@ -17,7 +17,7 @@ module Bots
     def spam
       params = {
         :act             => "post",
-        :hash            => @hash,
+        :hash            => @hash.strip,
         :facebook_export => "",
         :friends_only    => "",
         :note_title      => "",
@@ -32,6 +32,7 @@ module Bots
         @msg_count += 1
         p 'Sending group message #' + @msg_count.to_s
         params[:message] = @message + "\n\n" + (rand(9999999999) + 100000000).to_s
+        p params
         @@agent.post('http://vk.com/al_wall.php', params)
       end if @@logged_in
     end

@@ -1,6 +1,9 @@
 class AddStateToBots < ActiveRecord::Migration
-  def change
+  def self.up
     add_column :bots, :state, :string
+  end
 
+  def self.down
+    remove_column :bots, :state
   end
 end

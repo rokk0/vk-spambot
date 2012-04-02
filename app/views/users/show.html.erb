@@ -8,8 +8,10 @@
     </td>
     <td class="sidebar round">
       <strong>Name</strong> <%= @user.name %><br />
-      <strong>URL</strong>  <%= link_to user_path(@user), @user %><br />
-      <strong>Bots</strong>  <%= link_to current_user.bots.count, "/bots" %>
+      <strong>URL</strong> <%= link_to user_path(@user), @user %><br />
+      <% if current_user?(@user) || current_user.admin? %>
+        <strong>Bots</strong> <%= link_to @user.bots.count, :controller => 'bots', :action => 'index', :id => @user.id %>
+      <% end %>
     </td>
   </tr>
 </table>

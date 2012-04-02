@@ -18,7 +18,7 @@ module Bots
       params = {
         :act     => "post_comment",
         :topic   => @discussion_id,
-        :hash    => @hash,
+        :hash    => @hash.strip,
         :comment => @message
       }
       @count.times do

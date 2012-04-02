@@ -16,6 +16,11 @@ VkSpambot::Application.routes.draw do
   match '/run',     :to => 'bots#run'
   match '/stop',    :to => 'bots#stop'
 
+  match '/user_bots/'       => 'bots#index'
+  match '/user_bots/:id'    => 'bots#index'
+  match '/bots/new/:id'     => 'bots#new'
+  match '/bots/create/:id'  => 'bots#create'
+
   root :to => 'pages#home'
 
   # The priority is based upon order of creation:

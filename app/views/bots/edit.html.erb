@@ -1,6 +1,6 @@
-<h1>Editing bot</h1>
+<h1><%= @title %></h1>
 
 <%= render 'form' %>
 
 <%= link_to 'Show', @bot %> |
-<%= link_to 'Back', bots_path %>
+<%= link_to 'Back', :controller => 'bots', :action => 'index', :id => @bot.user_id %>

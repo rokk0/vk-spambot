@@ -1,4 +1,4 @@
-<h1>Listing bots</h1>
+<h1><%= @title %></h1>
 
 <table>
   <tr>
@@ -30,4 +30,4 @@
 
 <br />
 
-<%= link_to 'New Bot', new_bot_path %>
+<%= link_to 'New Bot', :controller => 'bots', :action => 'new', :id => params[:id] || current_user.id %>

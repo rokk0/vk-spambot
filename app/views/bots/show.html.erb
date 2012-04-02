@@ -1,4 +1,3 @@
-<p id="notice"><%= notice %></p>
 <script>
   function run(id) {
     $.post('/run', { id : id }, function(result){
@@ -51,4 +50,4 @@
   <%= pluralize(@bot.interval, 'minute') %>
 </p>
 <%= link_to 'Edit', edit_bot_path(@bot) %> |
-<%= link_to 'Back', bots_path %>
+<%= link_to 'Back', :controller => 'bots', :action => 'index', :id => @bot.user_id %>

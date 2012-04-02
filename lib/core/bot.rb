@@ -11,7 +11,7 @@ module Core
 
       @@agent = Mechanize.new { |a|
         a.user_agent_alias = @@config.get_value('user_agent_alias')
-        #a.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        a.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       }
     end
 

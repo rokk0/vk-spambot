@@ -182,7 +182,7 @@ class BotsController < ApplicationController
         flash_access_denied
       end
       rescue
-        flas_user_not_found
+        flash_user_not_found
     end
 
     def flash_access_denied
@@ -190,7 +190,7 @@ class BotsController < ApplicationController
       render "error"
     end
 
-    def flas_user_not_found
+    def flash_user_not_found
       flash.now[:error] = "User not found."
       render "error"
     end

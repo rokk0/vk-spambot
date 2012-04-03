@@ -1,6 +1,4 @@
-
 require 'rake'
-require 'parseconfig'
 require 'openwfe/util/scheduler'
 include OpenWFE
 

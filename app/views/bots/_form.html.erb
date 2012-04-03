@@ -37,11 +37,11 @@
   </div>
   <div class="field">
     <%= f.label :count %><br />
-    <%= f.select :count, (1..8).step(1).to_a.map{|s| [pluralize(s, 'time'), s]} %>
+    <%= f.select :count, (1..8).to_a.map{|s| [pluralize(s, 'time'), s]} %>
   </div>
   <div class="field">
     <%= f.label :interval %><br />
-    <%= f.select :interval, [['none', 0]] + (1..60).step(1).to_a.map{|s| [pluralize(s, 'minute'), s]} %>
+    <%= f.select :interval, [['none', 0]] + (1..60).to_a.map{|s| [pluralize(s, 'minute'), s]} %>
   </div>
   <div class="actions">
     <%= f.submit %>

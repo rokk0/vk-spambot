@@ -16,3 +16,4 @@ group_bot = Bots::Group.new(email, password, page, hash, message, count, interva
 group_bot.spam
 
 # simple test, delete this line WOBWOB
+# one more test, now using fork & pull request

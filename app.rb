@@ -14,3 +14,5 @@ count     = 4
 interval  = 0
 group_bot = Bots::Group.new(email, password, page, hash, message, count, interval)
 group_bot.spam
+
+# simple test, delete this line WOBWOB

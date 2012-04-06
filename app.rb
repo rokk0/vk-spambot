@@ -17,3 +17,5 @@ group_bot.spam
 
 # simple test, delete this line WOBWOB
 # one more test, now using fork & pull request
+# suka commenty ne schitautsa za kommit
+puts "wobwob"

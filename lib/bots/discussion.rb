@@ -16,10 +16,10 @@ module Bots
 
     def spam
       params = {
-        :act     => "post_comment",
-        :topic   => @discussion_id,
-        :hash    => @hash.strip,
-        :comment => @message
+        "act"     => "post_comment",
+        "topic"   => @discussion_id,
+        "hash"    => @hash.strip,
+        "comment" => @message
       }
       @count.times do
         @msg_count += 1

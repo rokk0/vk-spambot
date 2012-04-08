@@ -16,17 +16,16 @@ module Bots
 
     def spam
       params = {
-        "act"             => "post",
-        "hash"            => @hash.strip,
-        "type"            => "all",
-        "message"         => @message,
-        "to_id"           => @group_id
+        :act      => "post",
+        :hash     => @hash.strip,
+        :type     => "all",
+        :message  => @message,
+        :to_id    => @group_id
       }
       @count.times do
         @msg_count += 1
         p 'Sending group message #' + @msg_count.to_s
-        params["message"] = @message + "\n\n" + (rand(9999999999) + 100000000).to_s
-        p params
+        params[:message] = @message + "\n\n" + (rand(9999999999) + 100000000).to_s
         @@agent.post('http://vk.com/al_wall.php', params)
       end if @@logged_in
     end

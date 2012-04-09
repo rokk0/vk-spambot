@@ -18,12 +18,15 @@ class UsersController < ApplicationController
     @title = "Sign up"
   end
 
+  def edit
+    @title = "Edit user"
+  end
+
   def create
     @user = User.new(params[:user])
     if @user.save
       sign_in @user
-      flash.now[:success] = "Welcome to the... dunno!"
-      redirect_to @user
+      redirect_to @user, :flash => { :success => "Welcome to the... dunno!" }
     else
       @title = "Sign up"
       @user.password = ""
@@ -32,14 +35,9 @@ class UsersController < ApplicationController
     end
   end
 
-  def edit
-    @title = "Edit user"
-  end
-
   def update
     if @user.update_attributes(params[:user])
-      flash.now[:success] = "Profile was successfully updated."
-      redirect_to @user
+      redirect_to @user, :flash => { :success => "Profile was successfully updated." }
     else
       @title = "Edit user"
       render 'edit'
@@ -48,12 +46,12 @@ class UsersController < ApplicationController
 
   def destroy
     if @user.admin?
-      flash.now[:error] = "Administrator cannot be destroyed."
+      _flash = { :error => "Administrator cannot be destroyed." }
     else
       @user.destroy
-      flash.now[:success] = "User destroyed."
+      _flash = { :success => "User destroyed." }
     end
-    redirect_to users_path
+    redirect_to :back, :flash => _flash
   end
 
   private

@@ -8,10 +8,8 @@ module Bots
       @hash           = hash
       @message        = message
       @msg_count      = 0
-    end
 
-    def initLogin
-      return @bot.login
+      @bot.login
     end
 
     def spam

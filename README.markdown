@@ -21,7 +21,7 @@ interval      - repeat time interval 1-60 minutes
 # Bot configuration (bot_cfg):
 
 >>user_agent_alias = 'Linux Mozilla'  
-login_page         = 'http://vk.com'  
+home_page         = 'http://vk.com'  
 
 # Mechanize user_agent_alias:
 

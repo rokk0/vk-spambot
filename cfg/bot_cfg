@@ -1,2 +1,2 @@
 user_agent_alias  = 'Linux Mozilla'
-login_page        = 'http://vk.com'
+home_page        = 'http://vk.com'

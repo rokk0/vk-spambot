@@ -1,14 +1,21 @@
 <script>
   function run(id) {
     $.post('/run', { id : id }, function(result){
-      $('#run_bot_responses').text('| ' + result.state);
-    })
+      if (result.state == 'login_ip_error') {
+        var phone = prompt('Input your last four phone number digits:')
+        $.post('/run', { id : id, phone : phone }, function(result){
+           alert(result.state);
+        });
+      } else {
+       alert(result.state);
+      }
+    });
   }
 
   function stop(id) {
     $.post('/stop', { id : id }, function(result){
       $('#stop_bot_responses').text('| ' + result.state);
-    })
+    });
   }
 </script>
 

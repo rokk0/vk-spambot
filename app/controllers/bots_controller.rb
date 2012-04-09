@@ -9,7 +9,7 @@ class BotsController < ApplicationController
 
   before_filter :user_bot,          :only => [:edit, :update, :show, :destroy]
   before_filter :user_bot_create,   :only => [:new, :create]
-  before_filter :user_bot_control,  :only => [:run, :stop]
+  before_filter :user_bot_control,  :only => [:run, :stop, :phone]
 
   def index
     if !current_user.admin? && current_user.id != params[:id].to_i 
@@ -67,7 +67,7 @@ class BotsController < ApplicationController
   end
 
   def run
-    user_bot = initBot(@bot)
+    user_bot = initBot(@bot, params[:phone])
 
     if user_bot.loggedIn
       user_bot.spam
@@ -89,8 +89,8 @@ class BotsController < ApplicationController
   private
 
     # general method to initialize bot
-    def initBot(bot)
-      _bot = ('Bots::' + bot.bot_type.capitalize).constantize.new(bot.email, bot.password, bot.page, bot.page_hash, bot.message, bot.count)
+    def initBot(bot, phone)
+      _bot = ('Bots::' + bot.bot_type.capitalize).constantize.new(bot.email, bot.password, bot.page, bot.page_hash, bot.message, bot.count, phone)
       return _bot
     end
 

@@ -3,12 +3,13 @@ require 'parseconfig'
 
 module Core
   class Bot
-    def initialize(email, password)
+    def initialize(email, password, phone)
       @@config      = ParseConfig.new('cfg/bot_cfg')
       @@logged_in   = false
       @@login_state = nil
       @email        = email
       @password     = password
+      @phone        = phone
 
       @@agent = Mechanize.new { |a|
         a.user_agent_alias = @@config.get_value('user_agent_alias')
@@ -30,6 +31,9 @@ module Core
     def checkLogin
       @home_page    = @@agent.get(@@config.get_value('home_page'))
       @logout_link  = @home_page.link_with(:id => 'logout_link')
+
+      loginSecurity unless @phone.nil?
+
       @@login_state = 'login_ok'
       @@login_state = 'login_error' if @logout_link.nil?
       @@login_state = 'login_ip_error' unless @home_page.uri.to_s.match(/security_check/).nil?
@@ -46,10 +50,10 @@ module Core
     end
 
     # phone - last 4 numbers of phone
-    def loginSecurity(phone)
+    def loginSecurity
       params = {
         :act  => 'security_check',
-        :code => '0000',
+        :code => @phone,
         :to   => @home_page.uri.to_s.match(/to=([^.]*)&/).to_s,
         :hash => @logout_link.to_s.match(/hash=([^.]*)&/).to_s
       }

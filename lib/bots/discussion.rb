@@ -1,7 +1,7 @@
 module Bots
   class Discussion < Core::Bot
-    def initialize(email, password, page, hash, message, count)
-      @bot = Core::Bot.new(email, password)
+    def initialize(email, password, page, hash, message, count, phone)
+      @bot = Core::Bot.new(email, password, phone)
 
       @count          = (1..8).member?(count.to_i) ? count.to_i : 1
       @discussion_id  = '-' + page[/\d+_\d+/].to_s

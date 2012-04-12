@@ -4,7 +4,7 @@ include OpenWFE
 
 $LOAD_PATH << './lib'
 
-require 'core/bot'
+require 'core/vk'
 
 namespace :spam do
 

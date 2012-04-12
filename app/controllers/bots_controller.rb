@@ -1,4 +1,4 @@
-require 'core/bot'
+require 'core/vk'
 require 'bots/group'
 require 'bots/discussion'
 #require 'openwfe/util/scheduler'
@@ -15,24 +15,24 @@ class BotsController < ApplicationController
     if !current_user.admin? && current_user.id != params[:id].to_i 
       flash_access_denied
     else
-      @bots = current_user.admin? && params[:id] ? User.find(params[:id]).bots : current_user.bots
-      @title = "Listing bots"
+      @bots  = current_user.admin? && params[:id] ? User.find(params[:id]).bots : current_user.bots
+      @title = 'Listing bots'
     end
-    rescue
-        flash_access_denied
+  rescue
+    flash_access_denied
   end
 
   def show
   end
 
   def new
-    @bot = Bot.new
-    @title = "New bot"
+    @bot   = Bot.new
+    @title = 'New bot'
   end
 
   def edit
-    @bot.password = ""
-    @title = "Edit bot"
+    @bot.password = nil
+    @title = 'Edit bot'
   end
 
   def create
@@ -40,18 +40,18 @@ class BotsController < ApplicationController
     @bot = Bot.new(params[:bot])
 
     if @bot.save
-      redirect_to @bot, :flash => { :success => "Bot was successfully created." }
+      redirect_to @bot, :flash => { :success => 'Bot was successfully created.' }
     else
-      @title = "New bot"
+      @title = 'New bot'
       render 'new'
     end
   end
 
   def update
     if @bot.update_attributes(params[:bot])
-      redirect_to @bot, :flash => { :success => "Bot was successfully updated." }
+      redirect_to @bot, :flash => { :success => 'Bot was successfully updated.' }
     else
-      @title = "Edit bot"
+      @title = 'Edit bot'
       render 'edit'
     end
   end
@@ -62,44 +62,37 @@ class BotsController < ApplicationController
       flash_access_denied
     else
       @bot.destroy
-      redirect_to :back, :flash => { :success => "Bot destroyed." }
+      redirect_to :back, :flash => { :success => 'Bot destroyed.' }
     end
   end
 
   def run
     user_bot = initBot(@bot, params[:phone])
 
-    if user_bot.loggedIn
-      user_bot.spam
-    end
+    user_bot.spam if user_bot.logged_in
 
-    respond_to do |format|
-      format.json { render :json => { 'state' => user_bot.loginState } }
-    end
+    respond_to { |format| format.json { render :json => { 'state' => user_bot.login_state } } }
   end
 
   def stop
     response = { 'state' => 'ok' }
 
-    respond_to do |format|
-      format.json { render :json => response }
-    end
+    respond_to { |format| format.json { render :json => response } }
   end
 
   private
 
     # general method to initialize bot
     def initBot(bot, phone)
-      _bot = ('Bots::' + bot.bot_type.capitalize).constantize.new(bot.email, bot.password, bot.page, bot.page_hash, bot.message, bot.count, phone)
-      return _bot
+      _bot = ('Bots::' + bot.bot_type.capitalize).constantize.new(bot.id, bot.email, bot.password, bot.page, bot.page_hash, bot.message, bot.count, phone)
     end
 
     # check user access to all information about bots except listing.
     def user_bot
       @bot = current_user.admin? ? Bot.find(params[:id]) : current_user.bots.find(params[:id])
       user_bot_helper(@bot.user_id)
-      rescue
-        flash_access_denied
+    rescue
+      flash_access_denied
     end
 
     # check user access to create bots.
@@ -110,11 +103,13 @@ class BotsController < ApplicationController
     # check user access to run/stop bots.
     def user_bot_control
       _bot = Bot.find(params[:id])
-      @bot = current_user.admin? ? ( !User.find(_bot.user_id).admin? ? _bot : current_user.bots.find(params[:id]) ) : current_user.bots.find(params[:id])
-      rescue
-        respond_to do |format|
-          format.json { render :json => { 'state' => 'access denied' } }
-        end
+      if current_user.admin?
+        @bot = !User.find(_bot.user_id).admin? ? _bot : current_user.bots.find(params[:id])
+      else
+        @bot = current_user.bots.find(params[:id])
+      end
+    rescue
+      respond_to { |format| format.json { render :json => { 'state' => 'access denied' } } }
     end
 
 end

@@ -1,7 +1,7 @@
 module Bots
-  class Discussion < Core::Bot
-    def initialize(email, password, page, hash, message, count, phone)
-      @bot = Core::Bot.new(email, password, phone)
+  class Discussion < Core::Vk
+    def initialize(id, email, password, page, hash, message, count, phone)
+      @vk = Core::Vk.new(email, password, phone)
 
       @count          = (1..8).member?(count.to_i) ? count.to_i : 1
       @discussion_id  = '-' + page[/\d+_\d+/].to_s
@@ -9,22 +9,26 @@ module Bots
       @message        = message
       @msg_count      = 0
 
-      @bot.login
+      @vk.login
+
+      @hash = @vk.get_hash(id, /hash:\s'([^.]\w*)'/) if @hash.to_s.empty?
     end
 
     def spam
       params = {
-        :act     => "post_comment",
+        :act     => 'post_comment',
         :topic   => @discussion_id,
-        :hash    => @hash.strip,
+        :hash    => @hash,
         :comment => @message
       }
+
       @count.times do
         @msg_count += 1
-        p 'Sending discussion message #' + @msg_count.to_s
-        params[:comment] = @message + "\n\n" + (rand(9999999999) + 100000000).to_s
+        p 'Sending discussion message #' << @msg_count.to_s
+        params[:comment] = "#{@message}\n\n#{(rand(9999999999) + 100000000)}"
         @@agent.post('http://vk.com/al_board.php', params)
       end if @@logged_in
     end
+
   end
 end

@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   before_filter :admin_user,   :only => :destroy
 
   def index
-    @title = "All users"
+    @title = 'All users'
     @users = User.paginate(:page => params[:page])
   end
 
@@ -15,41 +15,41 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new
-    @title = "Sign up"
+    @title = 'Sign up'
   end
 
   def edit
-    @title = "Edit user"
+    @title = 'Edit user'
   end
 
   def create
     @user = User.new(params[:user])
     if @user.save
       sign_in @user
-      redirect_to @user, :flash => { :success => "Welcome to the... dunno!" }
+      redirect_to @user, :flash => { :success => 'Welcome to the... dunno!' }
     else
-      @title = "Sign up"
-      @user.password = ""
-      @user.password_confirmation = ""
+      @title = 'Sign up'
+      @user.password = nil
+      @user.password_confirmation = nil
       render 'new'
     end
   end
 
   def update
     if @user.update_attributes(params[:user])
-      redirect_to @user, :flash => { :success => "Profile was successfully updated." }
+      redirect_to @user, :flash => { :success => 'Profile was successfully updated.' }
     else
-      @title = "Edit user"
+      @title = 'Edit user'
       render 'edit'
     end
   end
 
   def destroy
     if @user.admin?
-      _flash = { :error => "Administrator cannot be destroyed." }
+      _flash = { :error => 'Administrator cannot be destroyed.' }
     else
       @user.destroy
-      _flash = { :success => "User destroyed." }
+      _flash = { :success => 'User destroyed.' }
     end
     redirect_to :back, :flash => _flash
   end
@@ -63,8 +63,8 @@ class UsersController < ApplicationController
     def correct_user
       @user = User.find(params[:id])
       if !current_user?(@user) && ( !current_user.admin? || @user.admin? )
-        flash.now[:error] = "Access denied."
-        render "error"
+        flash.now[:error] = 'Access denied.'
+        render 'error'
       end
     end
 
@@ -74,8 +74,8 @@ class UsersController < ApplicationController
  
     def check_user
       @user = User.find(params[:id])
-      rescue
-        flash.now[:error] = "User not found."
-        render "error"
+    rescue
+      flash.now[:error] = 'User not found.'
+      render 'error'
     end
 end

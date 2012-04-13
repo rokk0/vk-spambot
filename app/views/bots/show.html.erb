@@ -1,26 +1,3 @@
-<script>
-  function run(id) {
-    $.post('/run', { id : id }, function(result){
-      if (result.state == 'login_ip_error') {
-        var phone = prompt('Input your last four phone number digits:')
-        $.post('/run', { id : id, phone : phone }, function(result){
-           alert(result.state);
-        });
-      } else {
-       alert(result.state);
-      }
-    });
-  }
-
-  function stop(id) {
-    $.post('/stop', { id : id }, function(result){
-      $('#stop_bot_responses').text('| ' + result.state);
-    });
-  }
-</script>
-
-<%= link_to "Run", '#', :onclick => 'run("' + @bot.id.to_s + '"); return false;' %>&nbsp;<span id="run_bot_responses"></span><br/>
-<%= link_to "Stop", '#', :onclick => 'stop("' + @bot.id.to_s + '"); return false;' %>&nbsp;<span id="stop_bot_responses"></span><br/>
 <br/>
 <p>
   <b>Email/Phone:</b>

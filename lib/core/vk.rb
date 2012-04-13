@@ -38,14 +38,13 @@ module Core
     end
 
     def check_login
-      @home_page    = @@agent.get(@config.get_value('home_page'))
-      @logout_link  = @home_page.link_with(:id => 'logout_link')
-
-      login_security unless @phone.nil?
+      #@home_page    = @@agent.get(@config.get_value('home_page'))
+      home_page     = login_security
+      logout_link   = home_page.link_with(:id => 'logout_link')
 
       @@login_state = 'login_ok'
-      @@login_state = 'login_error' if @logout_link.nil?
-      @@login_state = 'login_ip_error' unless @home_page.uri.to_s.match(/security_check/).nil?
+      @@login_state = 'login_error' if logout_link.nil?
+      @@login_state = 'login_ip_error' unless home_page.uri.to_s.match(/security_check/).nil?
 
       @@logged_in   = @@login_state == 'login_ok'
     end
@@ -72,15 +71,21 @@ module Core
 
     # phone - last 4 numbers of phone
     def login_security
-      parse_page(@home_page, /hash: '([^.]\w*)'/)
-      params = {
-        :act  => 'security_check',
-        :code => @phone,
-        :to   => @home_page.uri.to_s.match(/to=([^.]*)&/).to_s,
-        :hash => @hash
-      }
+      home_page = @@agent.get(@config.get_value('home_page'))
 
-      @@agent.post('http://vk.com/login.php', params)
+      if !@phone.nil?
+        parse_page(home_page, /hash: '([^.]\w*)'/)
+        params = {
+          :act  => 'security_check',
+          :code => @phone,
+          :to   => home_page.uri.to_s.match(/to=([^.]*)&/).to_s,
+          :hash => @hash
+        }
+
+        return @@agent.post('http://vk.com/login.php', params)
+      else
+        return home_page
+      end
     end
 
   end

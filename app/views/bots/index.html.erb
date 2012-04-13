@@ -1,3 +1,24 @@
+<script>
+  debug_row_counter = 1;
+  function run(id) {
+    bot_debug_div = $('#bot_debug');
+    $.post('/run', { id : id }, function(result){
+      if (result.state == 'login_ip_error') {
+        var phone = prompt('Input your last four phone number digits:')
+        if (phone != null) {
+          $.post('/run', { id : id, phone : phone }, function(result){
+            bot_debug_div.html(debug_row_counter + ': ' + result.state + '<br />' + bot_debug_div.html());
+          });
+        }
+      } else {
+        bot_debug_div.html(debug_row_counter + ': ' + result.state + '<br />' + bot_debug_div.html());
+      }
+      debug_row_counter += 1;
+    });
+  }
+
+  function stop(id) {}
+</script>
 <h1><%= @title %></h1>
 
 <table>
@@ -8,6 +29,8 @@
     <th>Count</th>
     <th>Interval</th>
     <th>State</th>
+    <th></th>
+    <th></th>
     <th></th>
     <th></th>
     <th></th>
@@ -22,6 +45,8 @@
     <td><%= bot.interval %></td>
     <td><%= bot.state %></td>
     <% if @user && !@user.admin? && current_user.admin? || current_user?(@user) %>
+      <td><%= link_to 'Run', '#', :onclick => 'run("' + bot.id.to_s + '"); return false;' %></td>
+      <td><%= link_to 'Stop', '#', :onclick => 'stop("' + bot.id.to_s + '"); return false;' %></td>
       <td><%= link_to 'Show', bot %></td>
       <td><%= link_to 'Edit', edit_bot_path(bot) %></td>
       <td><%= link_to 'Destroy', bot, confirm: 'Are you sure?', method: :delete %></td>
@@ -30,8 +55,8 @@
 <% end unless @bots.empty? %>
 </table>
 
-<br />
 <% if @user && !@user.admin? && current_user.admin? || current_user?(@user) %>
-  <%= link_to 'New Bot', :controller => 'bots', :action => 'new', :id => params[:id] || current_user.id %>
+  <p><%= link_to 'New Bot', :controller => 'bots', :action => 'new', :id => params[:id] || current_user.id %></p>
 <% end %>
 
+<div id='bot_debug' style='overflow-y:scroll; height:100px; border:1px solid black;'></div>

@@ -1,5 +1,5 @@
 class Bot < ActiveRecord::Base
-  attr_accessible :user_id, :email, :password, :bot_type, :page, :page_hash, :message, :count, :interval, :state
+  attr_accessible :user_id, :email, :password, :bot_type, :page, :page_hash, :message, :count, :interval, :code
 
   belongs_to :user
 
@@ -7,7 +7,8 @@ class Bot < ActiveRecord::Base
 
   validates :password,  :presence     => true,
                         :confirmation => false,
-                        :length       => { :within => 6..40 }
+                        :length       => { :within => 6..40 },
+                        :if           => :validate_password?
 
   validates :email,     :presence     => true
   validates :bot_type,  :presence     => true
@@ -24,6 +25,21 @@ class Bot < ActiveRecord::Base
   validates :interval, :numericality  => { :only_integer => true, :message => 'can only be whole number.' }
   validates :interval, :numericality  => { :greater_than_or_equal_to => 0, :less_than_or_equal_to => 60, :message => 'can only be between 0 and 60.' }
 
+  validates :code, :numericality      => { :only_integer => true, :message => 'can only be whole number.' }
+  validates :code, :length            => { :is => 4, :message => 'length must be 4 digits.' }
+
   default_scope :order => 'bots.created_at DESC'
+
+  before_save :check_password
+
+  private
+
+    def validate_password?
+      new_record? || !password.blank?
+    end
+
+    def check_password
+      self.password = Bot.find(id).password if password.blank?
+    end
 
 end

@@ -9,7 +9,7 @@ class BotsController < ApplicationController
 
   before_filter :user_bot,          :only => [:edit, :update, :show, :destroy]
   before_filter :user_bot_create,   :only => [:new, :create]
-  before_filter :user_bot_control,  :only => [:run, :stop, :phone]
+  before_filter :user_bot_control,  :only => [:run, :stop]
 
   def index
     if !current_user.admin? && current_user.id != params[:user_id].to_i 
@@ -67,7 +67,7 @@ class BotsController < ApplicationController
   end
 
   def run
-    user_bot = initBot(@bot, params[:phone])
+    user_bot = initBot(@bot)
 
     user_bot.spam if user_bot.logged_in
 
@@ -83,8 +83,8 @@ class BotsController < ApplicationController
   private
 
     # general method to initialize bot
-    def initBot(bot, phone)
-      _bot = ('Bots::' + bot.bot_type.capitalize).constantize.new(bot.id, bot.email, bot.password, bot.page, bot.page_hash, bot.message, bot.count, phone)
+    def initBot(bot)
+      _bot = ('Bots::' + bot.bot_type.capitalize).constantize.new(bot.id, bot.email, bot.password, bot.page, bot.page_hash, bot.message, bot.count, bot.phone)
     end
 
     # check user access to all information about bots except listing.

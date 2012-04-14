@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120402130722) do
+ActiveRecord::Schema.define(:version => 20120414151850) do
 
   create_table "bots", :force => true do |t|
     t.integer  "user_id"
@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(:version => 20120402130722) do
     t.string   "interval"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
-    t.string   "state"
+    t.integer  "code"
   end
 
   add_index "bots", ["user_id"], :name => "index_bots_on_user_id"

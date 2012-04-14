@@ -11,25 +11,31 @@
     </div>
   <% end %>
   <div class="control-group">
-    <%= f.label :email, :class => 'control-label' %>
+    <%= f.label :email, :class => 'control-label required' %>
     <div class="controls">
       <%= f.text_field :email, :class => 'text_field' %>
     </div>
   </div>
   <div class="control-group">
-    <%= f.label :password, :class => 'control-label' %>
+    <%= f.label :password, :class => "control-label #{@bot.id ? '' : 'required'}" %>
     <div class="controls">
       <%= f.password_field :password, :autocomplete => 'off', :class => 'text_field' %>
     </div>
   </div>
   <div class="control-group">
-    <%= f.label :bot_type, :class => 'control-label' %>
+    <%= f.label :code, :class => 'control-label required' %>
+    <div class="controls">
+      <%= f.text_field :code, :class => 'text_field span1', :maxlength => 4 %> - last four phone number digits
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :bot_type, :class => 'control-label required' %>
     <div class="controls">
       <%= f.select :bot_type, { 'group' => 'group', 'discussion' => 'discussion'} %>
     </div>
   </div>
   <div class="control-group">
-    <%= f.label :page, :class => 'control-label' %>
+    <%= f.label :page, :class => 'control-label required' %>
     <div class="controls">
       <%= f.text_field :page, :class => 'text_field' %>
     </div>
@@ -41,7 +47,7 @@
     </div>
   </div>
   <div class="control-group">
-    <%= f.label :message, :class => 'control-label' %>
+    <%= f.label :message, :class => 'control-label required' %>
     <div class="controls">
       <%= f.text_area :message, :class => 'text_area', :rows => 10 %>
     </div>

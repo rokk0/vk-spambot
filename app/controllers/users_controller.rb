@@ -25,7 +25,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     if @user.save
-      sign_in @user
+      sign_in @user unless current_user && current_user.admin?
       redirect_to @user, :flash => { :success => 'Welcome to the... dunno!' }
     else
       @title = 'Sign up'
@@ -64,7 +64,7 @@ class UsersController < ApplicationController
       @user = User.find(params[:id])
       if !current_user?(@user) && ( !current_user.admin? || @user.admin? )
         flash.now[:error] = 'Access denied.'
-        render 'error'
+        render 'shared/_error_messages'
       end
     end
 
@@ -76,6 +76,6 @@ class UsersController < ApplicationController
       @user = User.find(params[:id])
     rescue
       flash.now[:error] = 'User not found.'
-      render 'error'
+      render 'shared/_error_messages'
     end
 end

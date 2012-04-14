@@ -12,10 +12,10 @@ class BotsController < ApplicationController
   before_filter :user_bot_control,  :only => [:run, :stop, :phone]
 
   def index
-    if !current_user.admin? && current_user.id != params[:id].to_i 
+    if !current_user.admin? && current_user.id != params[:user_id].to_i 
       flash_access_denied
     else
-      @bots  = current_user.admin? && params[:id] ? User.find(params[:id]).bots : current_user.bots
+      @bots  = (current_user.admin? && params[:user_id] ? User.find(params[:user_id]).bots : current_user.bots).paginate(:page => params[:page])
       @title = 'Listing bots'
     end
   rescue
@@ -36,7 +36,7 @@ class BotsController < ApplicationController
   end
 
   def create
-    params[:bot][:user_id] = current_user.admin? ? params[:id] || current_user.id : current_user.id
+    params[:bot][:user_id] = current_user.admin? ? params[:user_id] || current_user.id : current_user.id
     @bot = Bot.new(params[:bot])
 
     if @bot.save
@@ -62,7 +62,7 @@ class BotsController < ApplicationController
       flash_access_denied
     else
       @bot.destroy
-      redirect_to :back, :flash => { :success => 'Bot destroyed.' }
+      redirect_to user_bots_path(_user.id), :flash => { :success => 'Bot destroyed.' }
     end
   end
 
@@ -97,7 +97,7 @@ class BotsController < ApplicationController
 
     # check user access to create bots.
     def user_bot_create
-      user_bot_helper(params[:id])
+      user_bot_helper(params[:user_id])
     end
 
     # check user access to run/stop bots.

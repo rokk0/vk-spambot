@@ -1,19 +1,27 @@
-<table class="profile" summary="Profile information">
-  <tr>
-    <td class="main">
-      <h1>
-        <%= gravatar_for @user %>
-        <%= @user.name %>
-      </h1>
-    </td>
-    <td class="sidebar round">
-      <strong>Email</strong> <%= @user.email %><br />
-      <% if current_user?(@user) || current_user.admin? && !@user.admin? %>
-        <strong>Edit</strong> <%= link_to edit_user_path(@user), edit_user_path(@user) %><br />
-      <% end %>
-      <% if current_user?(@user) || current_user.admin? %>
-        <strong>Bots</strong> <%= link_to @user.bots.count, :controller => 'bots', :action => 'index', :id => @user.id %>
-      <% end %>
-    </td>
-  </tr>
-</table>
+<%- model_class = @user.class -%>
+<h1>
+  <%= gravatar_for @user %>
+  <%= @user.name %>
+</h1>
+
+<br />
+
+<% if current_user?(@user) || current_user.admin? %>
+  <p>
+    <strong><%= model_class.human_attribute_name(:email) %>:</strong>
+    <%= @user.email %>
+  </p>
+  <%= link_to raw("<i class='icon-fire'></i> Bots (#{@user.bots.count})"),
+              user_bots_path(@user),
+              :class => 'btn btn-info' %>
+<% end %>
+
+<% if current_user?(@user) || current_user.admin? && !@user.admin? %>
+  <%= link_to raw("<i class='icon-trash icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
+              edit_user_path(@user), :class => 'btn' %>
+  <%= link_to raw("<i class='icon-trash icon-white'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
+              user_path(@user),
+              :method => 'delete',
+              :confirm => t("helpers.links.confirm", :default => 'Are you sure?'),
+              :class => 'btn btn-danger' %>
+<% end %>

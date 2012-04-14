@@ -1,5 +1,4 @@
-<h1><%= @title %></h1>
-
-<%= render 'form' %>
-
-<%= link_to 'Back', :controller => 'bots', :action => 'index', :id => params[:id] || current_user.id %>
+<%- model_class = @bot.class -%>
+<h1><%=t '.title', :default => t('helpers.titles.new', :model => model_class.model_name.human,
+                               :default => "New #{model_class.model_name.human}") %></h1>
+<%= render :partial => 'form' %>

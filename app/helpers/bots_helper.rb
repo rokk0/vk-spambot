@@ -10,11 +10,11 @@ module BotsHelper
 
   def flash_access_denied
     flash.now[:error] = 'Access denied.'
-    render 'error'
+    render 'shared/_error_messages'
   end
 
   def flash_user_not_found
     flash.now[:error] = 'User not found.'
-    render 'error'
+    render 'shared/_error_messages'
   end
 end

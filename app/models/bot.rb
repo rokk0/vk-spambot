@@ -3,14 +3,13 @@ class Bot < ActiveRecord::Base
 
   belongs_to :user
 
-  #email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+  self.per_page = 10
 
-  validates :email,     :presence     => true
-                       #:format       => { :with => email_regex },
   validates :password,  :presence     => true,
                         :confirmation => false,
                         :length       => { :within => 6..40 }
 
+  validates :email,     :presence     => true
   validates :bot_type,  :presence     => true
   validates :page,      :presence     => true
   validates :message,   :presence     => true
@@ -25,6 +24,6 @@ class Bot < ActiveRecord::Base
   validates :interval, :numericality  => { :only_integer => true, :message => 'can only be whole number.' }
   validates :interval, :numericality  => { :greater_than_or_equal_to => 0, :less_than_or_equal_to => 60, :message => 'can only be between 0 and 60.' }
 
-  default_scope :order => 'bots.count DESC'
+  default_scope :order => 'bots.created_at DESC'
 
 end

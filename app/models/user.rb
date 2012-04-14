@@ -18,6 +18,8 @@ class User < ActiveRecord::Base
 
   has_many :bots, :dependent => :destroy
 
+  self.per_page = 10
+
   email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
   validates :name,  :presence   => true,
@@ -29,6 +31,8 @@ class User < ActiveRecord::Base
                        :confirmation => true,
                        :length       => { :within => 6..40 },
                        :if           => :validate_password?
+
+  default_scope :order => 'users.created_at DESC'
 
   before_save :encrypt_password
 

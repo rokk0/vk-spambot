@@ -19,44 +19,61 @@
 
   function stop(id) {}
 </script>
-<h1><%= @title %></h1>
+<%- model_class = Bot.new.class -%>
+<% @user = params[:user_id] ? User.find(params[:user_id]) : current_user %>
 
-<table>
-  <tr>
-    <th>Email/Phone</th>
-    <th>Bot type</th>
-    <th>Page</th>
-    <th>Count</th>
-    <th>Interval</th>
-    <th>State</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-<% @user = params[:id] ? User.find(params[:id]) : current_user %>
-<% @bots.each do |bot| %>
-  <tr>
-    <td><%= bot.email %></td>
-    <td><%= bot.bot_type %></td>
-    <td><%= bot.page %></td>
-    <td><%= bot.count %></td>
-    <td><%= bot.interval %></td>
-    <td><%= bot.state %></td>
-    <% if @user && !@user.admin? && current_user.admin? || current_user?(@user) %>
-      <td><%= link_to 'Run', '#', :onclick => 'run("' + bot.id.to_s + '"); return false;' %></td>
-      <td><%= link_to 'Stop', '#', :onclick => 'stop("' + bot.id.to_s + '"); return false;' %></td>
-      <td><%= link_to 'Show', bot %></td>
-      <td><%= link_to 'Edit', edit_bot_path(bot) %></td>
-      <td><%= link_to 'Destroy', bot, confirm: 'Are you sure?', method: :delete %></td>
+<h1><%= raw("#{t('.title', :default => model_class.model_name.human.pluralize)} (#{link_to @user.name, @user})")%> </h1>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th><%= model_class.human_attribute_name(:email) %></th>
+      <th><%= model_class.human_attribute_name(:bot_type) %></th>
+      <th><%= model_class.human_attribute_name(:page) %></th>
+      <th><%= model_class.human_attribute_name(:page_hash) %></th>
+      <th><%= model_class.human_attribute_name(:message) %></th>
+      <th><%= model_class.human_attribute_name(:count) %></th>
+      <th><%= model_class.human_attribute_name(:interval) %></th>
+      <th><%= model_class.human_attribute_name(:created_at) %></th>
+      <th><%=t '.actions', :default => t("helpers.actions") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @bots.each do |bot| %>
+      <tr>
+        <td><%= bot.email %></td>
+        <td><span class="label"><%= bot.bot_type %></span></td>
+        <td><%= link_to bot.page, bot.page %></td>
+        <td><%= bot.page_hash %></td>
+        <td><%= bot.message %></td>
+        <td class='center'><span class="badge badge-info"><%= bot.count %></span></td>
+        <td class='center'><span class="badge badge-info"><%= bot.interval %></span></td>
+        <td class='center'><%= bot.created_at.strftime("%d/%m/%Y") %></td>
+        <td class='bots_list_control'>
+          <%= link_to 'Run',
+                      '#',
+                      :onclick => 'run("' + bot.id.to_s + '"); return false;',
+                      :class => 'btn btn-mini btn-success' %>
+          <%= link_to raw("<i class='icon-eye-open'></i> #{t('.view', :default => t("helpers.links.view"))}"),
+                      bot_path(bot), :class => 'btn btn-mini' %>
+          <%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
+                      edit_bot_path(bot), :class => 'btn btn-mini' %>
+          <%= link_to raw("<i class='icon-trash icon-white'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
+                      bot_path(bot),
+                      :method => :delete,
+                      :confirm => t("helpers.links.confirm", :default => 'Are you sure?'),
+                      :class => 'btn btn-mini btn-danger' %>
+        </td>
+      </tr>
     <% end %>
-  </tr>
-<% end unless @bots.empty? %>
+  </tbody>
 </table>
 
 <% if @user && !@user.admin? && current_user.admin? || current_user?(@user) %>
-  <p><%= link_to 'New Bot', :controller => 'bots', :action => 'new', :id => params[:id] || current_user.id %></p>
+  <%= link_to t('.new', :default => t("helpers.links.new")),
+            new_user_bot_path(@user),
+            :class => 'btn btn-primary' %>
 <% end %>
 
+<br /><br />
 <div id='bot_debug' style='overflow-y:scroll; height:100px; border:1px solid black;'></div>

@@ -1,37 +1,44 @@
-<br/>
+<%- model_class = @bot.class -%>
+<% @user = User.find(@bot.user_id) %>
 <p>
-  <b>Email/Phone:</b>
+  <strong><%= model_class.human_attribute_name(:user_id) %>:</strong>
+  <%= link_to @user.name, user_bots_path(@user) %>
+</p>
+<p>
+  <strong><%= model_class.human_attribute_name(:email) %>:</strong>
   <%= @bot.email %>
 </p>
-
 <p>
-  <b>Bot type:</b>
+  <strong><%= model_class.human_attribute_name(:bot_type) %>:</strong>
   <%= @bot.bot_type %>
 </p>
-
 <p>
-  <b>Page:</b>
+  <strong><%= model_class.human_attribute_name(:page) %>:</strong>
   <%= @bot.page %>
 </p>
-
 <p>
-  <b>Page hash:</b>
+  <strong><%= model_class.human_attribute_name(:page_hash) %>:</strong>
   <%= @bot.page_hash %>
 </p>
-
 <p>
-  <b>Message:</b>
+  <strong><%= model_class.human_attribute_name(:message) %>:</strong>
   <%= @bot.message %>
 </p>
-
 <p>
-  <b>Count:</b>
-  <%= pluralize(@bot.count, 'time') %>
+  <strong><%= model_class.human_attribute_name(:count) %>:</strong>
+  <%= @bot.count %>
+</p>
+<p>
+  <strong><%= model_class.human_attribute_name(:interval) %>:</strong>
+  <%= @bot.interval %>
 </p>
 
-<p>
-  <b>Interval:</b>
-  <%= pluralize(@bot.interval, 'minute') %>
-</p>
-<%= link_to 'Edit', edit_bot_path(@bot) %> |
-<%= link_to 'Back', :controller => 'bots', :action => 'index', :id => @bot.user_id %>
+<%= link_to raw("<i class='icon-arrow-left'></i> #{t('.back', :default => t("helpers.links.back"))}"),
+            user_bots_path(@bot.user_id), :class => 'btn' %>
+<%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
+            edit_bot_path(@bot), :class => 'btn' %>
+<%= link_to raw("<i class='icon-trash icon-white'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
+            bot_path(@bot),
+            :method => 'delete',
+            :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')),
+            :class => 'btn btn-danger' %>

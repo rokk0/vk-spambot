@@ -1,7 +1,10 @@
 VkSpambot::Application.routes.draw do
   get "sessions/new"
 
-  resources :users
+  resources :users do
+    resources :bots
+  end
+
   resources :bots
   resources :sessions, :only => [:new, :create, :destroy]
 
@@ -16,10 +19,9 @@ VkSpambot::Application.routes.draw do
   match '/run',     :to => 'bots#run'
   match '/stop',    :to => 'bots#stop'
 
-  match '/user_bots/'       => 'bots#index'
-  match '/user_bots/:id'    => 'bots#index'
-  match '/bots/new/:id'     => 'bots#new'
-  match '/bots/create/:id'  => 'bots#create'
+  match '/users/:user_id/bots/new'  => 'bots#create',  :via => :post,    :as => 'create_bot'
+  match '/bots/:id/edit'            => 'bots#update',  :via => :put,     :as => 'update_bot'
+  match '/users/:user_id/bots/:id'  => 'bots#destroy', :via => :delete,  :as => 'destroy_bot'
 
   root :to => 'pages#home'
 

@@ -1,8 +1,8 @@
-<%= form_for(@bot, :url => { :action => @bot.id ? 'update' : 'create', :id => params[:id] || current_user.id }) do |f| %>
+<%= form_for @bot, :url => @bot.id ? update_bot_path(@bot) : create_bot_path, :html => { :class => 'form-horizontal' } do |f| %>
   <% if @bot.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@bot.errors.count, "error") %> prohibited this bot from being saved:</h2>
-
+    <div class='alert alert-error'>
+      <h2><%= pluralize(@bot.errors.count, 'error') %>:</h2>
+      <p>There were problems with the following fields:</p>
       <ul>
       <% @bot.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
@@ -10,36 +10,58 @@
       </ul>
     </div>
   <% end %>
+  <div class="control-group">
+    <%= f.label :email, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :email, :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :password, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.password_field :password, :autocomplete => 'off', :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :bot_type, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.select :bot_type, { 'group' => 'group', 'discussion' => 'discussion'} %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :page, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :page, :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :page_hash, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :page_hash, :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :message, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_area :message, :class => 'text_area' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :count, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.select :count, (1..8).to_a.map{|s| [pluralize(s, 'time'), s]} %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :interval, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.select :interval, [['none', 0]] + (1..60).to_a.map{|s| [pluralize(s, 'minute'), s]} %>
+    </div>
+  </div>
 
-  <div class="field">
-    <%= f.label :email, 'Email or phone' %><br />
-    <%= f.text_field :email %>
-  </div>
-  <div class="field">
-    <%= f.label :password %><br />
-    <%= f.password_field :password, :autocomplete => 'off' %>
-  </div>
-  <div class="field">
-    <%= f.label :bot_type %><br />
-    <%= f.select :bot_type, { 'group' => 'group', 'discussion' => 'discussion'} %>
-  </div>
-  <div class="field">
-    <%= f.label :page %><br />
-    <%= f.text_field :page %>
-  </div>
-  <div class="field">
-    <%= f.label :message %><br />
-    <%= f.text_area :message %>
-  </div>
-  <div class="field">
-    <%= f.label :count %><br />
-    <%= f.select :count, (1..8).to_a.map{|s| [pluralize(s, 'time'), s]} %>
-  </div>
-  <div class="field">
-    <%= f.label :interval %><br />
-    <%= f.select :interval, [['none', 0]] + (1..60).to_a.map{|s| [pluralize(s, 'minute'), s]} %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
+  <div class="form-actions">
+    <%= f.submit nil, :class => 'btn btn-primary' %>
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                user_bots_path(@bot.user_id), :class => 'btn' %>
   </div>
 <% end %>

@@ -1,9 +1,6 @@
-<h1><%= @title %></h1>
+<%- model_class = @user.class -%>
 
-<%= render 'form' %>
-<div>
-  <%= gravatar_for @user %>
-  <a href="http://gravatar.com/emails">change</a>
-</div>
+<%= link_to raw("#{gravatar_for @user}"),
+                      'http://gravatar.com/emails' %>
 
-<%= link_to 'Back', @user %>
+<%= render :partial => 'form' %>

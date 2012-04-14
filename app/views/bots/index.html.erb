@@ -1,17 +1,52 @@
+<%- model_class = Bot.new.class -%>
+<% @user = params[:user_id] ? User.find(params[:user_id]) : current_user %>
+
 <script>
-  debug_row_counter = 1;
-  function run(id) {
+  $(document).ready(function(){
+    debug_row_counter = 1;
     bot_debug_div = $('#bot_debug');
+  });
+
+  function print_debug(value) {
+    bot_debug_div.html(debug_row_counter + ': ' + value + '<br />' + bot_debug_div.html());
+    debug_row_counter += 1;
+  }
+
+  function run_all() {
+    $('#run_all_btn').toggleClass('disabled');
+    $('#run_all_btn').attr('onclick', 'return false;');
+
+    $.post('/run_all', { user_id : <%= @user.id %>}, function(result){
+      if (result.states != undefined) {
+        if(result.states.length > 0) {
+          $.each(result.states, function(index, value){
+            print_debug(value);
+          });
+        } else {
+          print_debug('no bots were initialized');
+        }
+      } else {
+        print_debug('spambot error');
+      }
+
+      $('#run_all_btn').toggleClass('disabled');
+      $('#run_all_btn').attr('onclick', 'run_all(); return false;');
+    });
+  }
+
+  function run(id) {
+    $('#run_' + id + '_btn').toggleClass('disabled');
+    $('#run_' + id + '_btn').attr('onclick', 'return false;');
+
     $.post('/run', { id : id }, function(result){
-      bot_debug_div.html(debug_row_counter + ': ' + result.state + '<br />' + bot_debug_div.html());
-      debug_row_counter += 1;
+      print_debug(result.state);
+      $('#run_' + id + '_btn').toggleClass('disabled');
+      $('#run_' + id + '_btn').attr('onclick', 'run(' + id + '); return false;');
     });
   }
 
   function stop(id) {}
 </script>
-<%- model_class = Bot.new.class -%>
-<% @user = params[:user_id] ? User.find(params[:user_id]) : current_user %>
 
 <h1><%= raw("#{t('.title', :default => model_class.model_name.human.pluralize)} (#{link_to @user.name, @user})")%> </h1>
 
@@ -46,7 +81,8 @@
           <%= link_to 'Run',
                       '#',
                       :onclick => 'run("' + bot.id.to_s + '"); return false;',
-                      :class => 'btn btn-mini btn-success' %>
+                      :class => 'btn btn-mini btn-success',
+                      :id => 'run_' + bot.id.to_s + '_btn' %>
           <%= link_to raw("<i class='icon-eye-open'></i> #{t('.view', :default => t("helpers.links.view"))}"),
                       bot_path(bot), :class => 'btn btn-mini' %>
           <%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
@@ -63,6 +99,11 @@
 </table>
 
 <% if @user && !@user.admin? && current_user.admin? || current_user?(@user) %>
+  <%= link_to 'Run All',
+              '#',
+              :onclick => 'run_all(); return false;',
+              :class => 'btn btn-success',
+              :id => 'run_all_btn' %>
   <%= link_to t('.new', :default => t("helpers.links.new")),
             new_user_bot_path(@user),
             :class => 'btn btn-primary' %>

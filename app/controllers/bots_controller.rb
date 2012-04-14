@@ -8,7 +8,7 @@ class BotsController < ApplicationController
   include BotsHelper
 
   before_filter :user_bot,          :only => [:edit, :update, :show, :destroy]
-  before_filter :user_bot_create,   :only => [:new, :create]
+  before_filter :user_bot_create,   :only => [:new, :create, :run_all]
   before_filter :user_bot_control,  :only => [:run, :stop]
 
   def index
@@ -78,6 +78,20 @@ class BotsController < ApplicationController
     response = { 'state' => 'ok' }
 
     respond_to { |format| format.json { render :json => response } }
+  end
+
+  def run_all
+    states = []
+
+    User.find(params[:user_id].to_i).bots.each do |bot|
+      user_bot = initBot(bot)
+  
+      user_bot.spam if user_bot.logged_in
+
+      states.push("##{bot.id} - #{user_bot.login_state}")
+    end
+
+    respond_to { |format| format.json { render :json => { 'states' => states } } }
   end
 
   private

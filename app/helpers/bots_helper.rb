@@ -2,7 +2,7 @@ module BotsHelper
 
   # check user access to actions with bots, also return exception if user not found.
   def user_bot_helper(user_id)
-    user = User.find(user_id)
+    user = User.find(user_id.to_i)
     flash_access_denied if !current_user?(user) && user.admin? && current_user.admin?
   rescue
     flash_user_not_found

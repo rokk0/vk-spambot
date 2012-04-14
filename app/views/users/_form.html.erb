@@ -36,9 +36,11 @@
     </div>
   </div>
 
-  <div class="form-actions">
-    <%= f.submit nil, :class => 'btn btn-primary' %>
-    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
-                :back, :class => 'btn' %>
+  <div class="control-group">
+    <div class="controls">
+      <%= f.submit nil, :class => 'btn btn-primary' %>
+      <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                  :back, :class => 'btn' %>
+    </div>
   </div>
 <% end %>

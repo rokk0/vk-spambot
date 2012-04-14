@@ -43,7 +43,7 @@
   <div class="control-group">
     <%= f.label :message, :class => 'control-label' %>
     <div class="controls">
-      <%= f.text_area :message, :class => 'text_area' %>
+      <%= f.text_area :message, :class => 'text_area', :rows => 10 %>
     </div>
   </div>
   <div class="control-group">
@@ -59,9 +59,11 @@
     </div>
   </div>
 
-  <div class="form-actions">
-    <%= f.submit nil, :class => 'btn btn-primary' %>
-    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
-                user_bots_path(@bot.user_id), :class => 'btn' %>
+  <div class="control-group">
+    <div class="controls">
+      <%= f.submit nil, :class => 'btn btn-primary' %>
+      <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                  user_bots_path(@bot.user_id), :class => 'btn' %>
+    </div>
   </div>
 <% end %>

@@ -3,16 +3,7 @@
   function run(id) {
     bot_debug_div = $('#bot_debug');
     $.post('/run', { id : id }, function(result){
-      if (result.state == 'login_ip_error') {
-        var phone = prompt('Input your last four phone number digits:')
-        if (phone != null) {
-          $.post('/run', { id : id, phone : phone }, function(result){
-            bot_debug_div.html(debug_row_counter + ': ' + result.state + '<br />' + bot_debug_div.html());
-          });
-        }
-      } else {
-        bot_debug_div.html(debug_row_counter + ': ' + result.state + '<br />' + bot_debug_div.html());
-      }
+      bot_debug_div.html(debug_row_counter + ': ' + result.state + '<br />' + bot_debug_div.html());
       debug_row_counter += 1;
     });
   }
@@ -27,6 +18,7 @@
 <table class="table table-striped">
   <thead>
     <tr>
+      <th>#</th>
       <th><%= model_class.human_attribute_name(:email) %></th>
       <th><%= model_class.human_attribute_name(:bot_type) %></th>
       <th><%= model_class.human_attribute_name(:page) %></th>
@@ -41,6 +33,7 @@
   <tbody>
     <% @bots.each do |bot| %>
       <tr>
+        <td><%= bot.id %></td>
         <td><%= bot.email %></td>
         <td><span class="label"><%= bot.bot_type %></span></td>
         <td><%= link_to bot.page, bot.page %></td>

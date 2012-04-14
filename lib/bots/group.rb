@@ -1,7 +1,7 @@
 module Bots
   class Group < Core::Vk
-    def initialize(id, email, password, page, hash, message, count, phone)
-      @vk = Core::Vk.new(email, password, phone)
+    def initialize(id, email, password, page, hash, message, count, code)
+      @vk = Core::Vk.new(email, password, code)
 
       @count      = (1..8).member?(count.to_i) ? count.to_i : 1
       @group_id   = '-' + page[/\d+/].to_s

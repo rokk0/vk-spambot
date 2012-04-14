@@ -1,7 +1,7 @@
 module Bots
   class Discussion < Core::Vk
-    def initialize(id, email, password, page, hash, message, count, phone)
-      @vk = Core::Vk.new(email, password, phone)
+    def initialize(id, email, password, page, hash, message, count, code)
+      @vk = Core::Vk.new(email, password, code)
 
       @count          = (1..8).member?(count.to_i) ? count.to_i : 1
       @discussion_id  = '-' + page[/\d+_\d+/].to_s

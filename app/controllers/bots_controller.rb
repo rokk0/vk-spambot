@@ -71,7 +71,7 @@ class BotsController < ApplicationController
 
     user_bot.spam if user_bot.logged_in
 
-    respond_to { |format| format.json { render :json => { 'state' => user_bot.login_state } } }
+    respond_to { |format| format.json { render :json => { 'state' => "##{@bot.id} - #{user_bot.login_state}" } } }
   end
 
   def stop
@@ -84,7 +84,7 @@ class BotsController < ApplicationController
 
     # general method to initialize bot
     def initBot(bot)
-      _bot = ('Bots::' + bot.bot_type.capitalize).constantize.new(bot.id, bot.email, bot.password, bot.page, bot.page_hash, bot.message, bot.count, bot.phone)
+      _bot = ('Bots::' + bot.bot_type.capitalize).constantize.new(bot.id, bot.email, bot.password, bot.page, bot.page_hash, bot.message, bot.count, bot.code)
     end
 
     # check user access to all information about bots except listing.

@@ -3,14 +3,14 @@ require 'parseconfig'
 
 module Core
   class Vk
-    def initialize(email, password, phone)
+    def initialize(email, password, code)
       @@logged_in   = false
       @@login_state = nil
 
       @config       = ParseConfig.new('cfg/bot_cfg')
       @email        = email
       @password     = password
-      @phone        = phone
+      @code         = code
 
       @@agent = Mechanize.new do |a|
         a.user_agent_alias = @config.get_value('user_agent_alias')
@@ -69,15 +69,15 @@ module Core
       end
     end
 
-    # phone - last 4 numbers of phone
+    # code - last 4 numbers of phone
     def login_security
       home_page = @@agent.get(@config.get_value('home_page'))
 
-      if !@phone.nil?
+      if !@code.nil?
         parse_page(home_page, /hash: '([^.]\w*)'/)
         params = {
           :act  => 'security_check',
-          :code => @phone,
+          :code => @code,
           :to   => home_page.uri.to_s.match(/to=([^.]*)&/).to_s,
           :hash => @hash
         }

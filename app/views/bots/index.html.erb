@@ -50,7 +50,7 @@
 
 <h1><%= raw("#{t('.title', :default => model_class.model_name.human.pluralize)} (#{link_to @user.name, @user})")%> </h1>
 
-<table class="table table-striped">
+<table class="table table-striped table-bordered centered">
   <thead>
     <tr>
       <th>#</th>
@@ -74,9 +74,9 @@
         <td><%= link_to bot.page, bot.page %></td>
         <td><%= bot.page_hash %></td>
         <td><%= bot.message %></td>
-        <td class='center'><span class="badge badge-info"><%= bot.count %></span></td>
-        <td class='center'><span class="badge badge-info"><%= bot.interval %></span></td>
-        <td class='center'><%= bot.created_at.strftime("%d/%m/%Y") %></td>
+        <td><span class="badge badge-info"><%= bot.count %></span></td>
+        <td><span class="badge badge-info"><%= bot.interval %></span></td>
+        <td><%= bot.created_at.strftime("%d/%m/%Y") %></td>
         <td class='bots_list_control'>
           <%= link_to 'Run',
                       '#',

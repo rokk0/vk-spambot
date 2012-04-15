@@ -17,9 +17,12 @@
 <% end %>
 
 <% if current_user?(@user) || current_user.admin? && !@user.admin? %>
-  <%= link_to raw("<i class='icon-trash icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
+  <%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
               edit_user_path(@user), :class => 'btn' %>
-  <%= link_to raw("<i class='icon-trash icon-white'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
+<% end %>
+
+<% if current_user.admin? && !@user.admin? %>
+  <%= link_to raw("<i class='icon-trash'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
               user_path(@user),
               :method => 'delete',
               :confirm => t("helpers.links.confirm", :default => 'Are you sure?'),

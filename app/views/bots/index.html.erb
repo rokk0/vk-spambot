@@ -78,20 +78,22 @@
         <td><span class="badge badge-info"><%= bot.interval %></span></td>
         <td><%= bot.created_at.strftime("%d/%m/%Y") %></td>
         <td class='bots_list_control left'>
-          <%= link_to 'Run',
-                      '#',
-                      :onclick => 'run("' + bot.id.to_s + '"); return false;',
-                      :class => 'btn btn-mini btn-success',
-                      :id => 'run_' + bot.id.to_s + '_btn' %>
-          <%= link_to raw("<i class='icon-eye-open'></i> #{t('.view', :default => t("helpers.links.view"))}"),
-                      bot_path(bot), :class => 'btn btn-mini' %>
-          <%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
-                      edit_bot_path(bot), :class => 'btn btn-mini' %>
-          <%= link_to raw("<i class='icon-trash'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
-                      bot_path(bot),
-                      :method => :delete,
-                      :confirm => t("helpers.links.confirm", :default => 'Are you sure?'),
-                      :class => 'btn btn-mini btn-danger' %>
+          <% if current_user?(@user) || current_user.admin? && !@user.admin? %>
+            <%= link_to 'Run',
+                        '#',
+                        :onclick => 'run("' + bot.id.to_s + '"); return false;',
+                        :class => 'btn btn-mini btn-success',
+                        :id => 'run_' + bot.id.to_s + '_btn' %>
+            <%= link_to raw("<i class='icon-eye-open'></i> #{t('.view', :default => t("helpers.links.view"))}"),
+                        bot_path(bot), :class => 'btn btn-mini' %>
+            <%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
+                        edit_bot_path(bot), :class => 'btn btn-mini' %>
+            <%= link_to raw("<i class='icon-trash'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
+                        bot_path(bot),
+                        :method => :delete,
+                        :confirm => t("helpers.links.confirm", :default => 'Are you sure?'),
+                        :class => 'btn btn-mini btn-danger' %>
+          <% end %>
         </td>
       </tr>
     <% end %>

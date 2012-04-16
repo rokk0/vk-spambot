@@ -15,10 +15,13 @@ module Core
       @@agent = Mechanize.new do |a|
         a.user_agent_alias = @config.get_value('user_agent_alias')
         a.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        a.pre_connect_hooks << lambda{|agent, request|
+          request['X-Requested-With'] = 'XMLHttpRequest'
+        }
       end
     end
 
-    def logged_in
+    def logged_in?
       @@logged_in
     end
 
@@ -38,7 +41,6 @@ module Core
     end
 
     def check_login
-      #@home_page    = @@agent.get(@config.get_value('home_page'))
       home_page     = login_security
       logout_link   = home_page.link_with(:id => 'logout_link')
 
@@ -47,6 +49,13 @@ module Core
       @@login_state = 'login_ip_error' unless home_page.uri.to_s.match(/security_check/).nil?
 
       @@logged_in   = @@login_state == 'login_ok'
+    end
+
+    def check_captcha(body)
+      #8766<!><!>3<!>3323<!>2<!>877498584665<!>0 - eng captcha
+      #8766<!><!>3<!>3323<!>2<!>811148188578<!>1 - rus captcha
+      @@login_state = 'eng_captcha' if body.match(/\d+<!><!>\d+<!>\d+<!>\d+<!>\d+<!>0/)
+      @@login_state = 'rus_captcha' if body.match(/\d+<!><!>\d+<!>\d+<!>\d+<!>\d+<!>1/)
     end
 
     def get_hash(id, regexp)

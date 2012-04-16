@@ -4,6 +4,7 @@ module Bots
       @vk = Core::Vk.new(email, password, code)
 
       @count      = (1..8).member?(count.to_i) ? count.to_i : 1
+      @page       = page
       @group_id   = '-' + page[/\d+/].to_s
       @hash       = hash
       @message    = message
@@ -20,14 +21,16 @@ module Bots
         :hash     => @hash,
         :type     => 'all',
         :message  => @message,
-        :to_id    => @group_id
+        :to_id    => @group_id,
+        :al       => '1'
       }
 
       @count.times do
         @msg_count += 1
         p 'Sending group message #' << @msg_count.to_s
         params[:message] = "#{@message}\n\n#{(rand(9999999999) + 100000000)}"
-        @@agent.post('http://vk.com/al_wall.php', params)
+        page = @@agent.post('http://vk.com/al_wall.php', params, { 'Referer' => @page })
+        @vk.check_captcha(page.body)
       end if @@logged_in
     end
 

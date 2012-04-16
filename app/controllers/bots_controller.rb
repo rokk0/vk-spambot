@@ -69,7 +69,7 @@ class BotsController < ApplicationController
   def run
     user_bot = initBot(@bot)
 
-    user_bot.spam if user_bot.logged_in
+    user_bot.spam if user_bot.logged_in?
 
     respond_to { |format| format.json { render :json => { 'state' => "##{@bot.id} - #{user_bot.login_state}" } } }
   end
@@ -86,7 +86,7 @@ class BotsController < ApplicationController
     User.find(params[:user_id].to_i).bots.each do |bot|
       user_bot = initBot(bot)
   
-      user_bot.spam if user_bot.logged_in
+      user_bot.spam if user_bot.logged_in?
 
       states.push("##{bot.id} - #{user_bot.login_state}")
     end

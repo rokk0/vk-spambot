@@ -25,17 +25,16 @@ group :production, :staging do
 end
 
 group :development do
-  gem 'rspec-rails', '~> 2.6'
   gem 'annotate', :git => 'git://github.com/ctran/annotate_models.git'
   gem 'heroku'
 end
 
 group :test do
-  gem 'rspec-rails', '~> 2.6'
   gem 'webrat', '~> 0.7'
   gem 'factory_girl_rails', '1.0'
 end
 
 group :development, :test do
   gem "sqlite3-ruby", "~> 1.3.3", :require => "sqlite3"
+  gem 'rspec-rails', '~> 2.6'
 end

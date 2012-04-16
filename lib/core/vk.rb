@@ -75,6 +75,7 @@ module Core
       page.search('script').each do |script|
         script.content.match(regexp)
         @hash ||= $1
+        p "#{@hash} - login_security"
       end
     end
 

@@ -12,7 +12,9 @@ module Bots
 
       @vk.login
 
+      p "#{@hash} - before post_discussion"
       @hash = @vk.get_hash(id, /hash:\s'([^.]\w*)'/) if @hash.to_s.empty?
+      p "#{@hash} - after post_discussion"
     end
 
     def spam

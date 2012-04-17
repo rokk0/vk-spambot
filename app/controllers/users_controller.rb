@@ -1,6 +1,8 @@
 class UsersController < ApplicationController
+  include UsersHelper
+
   before_filter :check_user,   :only => [:show, :edit, :update, :destroy]
-  before_filter :authenticate, :only => [:index, :edit, :update, :destroy]
+  before_filter :authenticate, :only => [:index, :show, :edit, :update, :destroy]
   before_filter :correct_user, :only => [:edit, :update]
   before_filter :admin_user,   :only => :destroy
 
@@ -54,28 +56,4 @@ class UsersController < ApplicationController
     redirect_to :back, :flash => _flash
   end
 
-  private
-
-    def authenticate
-      deny_access unless signed_in?
-    end
-
-    def correct_user
-      @user = User.find(params[:id])
-      if !current_user?(@user) && ( !current_user.admin? || @user.admin? )
-        flash.now[:error] = 'Access denied.'
-        render 'shared/_error_messages'
-      end
-    end
-
-    def admin_user
-      redirect_to(root_path) unless current_user.admin?
-    end
- 
-    def check_user
-      @user = User.find(params[:id])
-    rescue
-      flash.now[:error] = 'User not found.'
-      render 'shared/_error_messages'
-    end
 end

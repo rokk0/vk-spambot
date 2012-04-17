@@ -9,4 +9,15 @@ module ApplicationHelper
       "#{base_title} | #{@title}"
     end
   end
+
+  def flash_access_denied
+    flash.now[:error] = 'Access denied.'
+    render 'shared/_error_messages'
+  end
+
+  def flash_user_not_found
+    flash.now[:error] = 'User not found.'
+    render 'shared/_error_messages'
+  end
+
 end

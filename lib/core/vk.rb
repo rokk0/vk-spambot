@@ -79,7 +79,7 @@ module Core
       end
     end
 
-    # code - last 4 numbers of phone
+    # code - last 4 didgits of a phone number
     def login_security
       home_page = @@agent.get(@config.get_value('home_page'))
 

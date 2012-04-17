@@ -5,4 +5,28 @@ module UsersHelper
                                             :class => 'gravatar',
                                             :gravatar => options)
   end
+
+  private
+
+    def authenticate
+      deny_access unless signed_in?
+    end
+
+    def correct_user
+      @user = User.find(params[:id])
+      if !current_user?(@user) && ( !current_user.admin? || @user.admin? )
+        flash_access_denied
+      end
+    end
+
+    def admin_user
+      redirect_to(root_path) unless current_user.admin?
+    end
+ 
+    def check_user
+      @user = User.find(params[:id])
+    rescue
+      flash_user_not_found
+    end
+
 end

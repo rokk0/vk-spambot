@@ -7,9 +7,9 @@ require 'bots/discussion'
 class BotsController < ApplicationController
   include BotsHelper
 
-  before_filter :user_bot,          :only => [:edit, :update, :show, :destroy]
-  before_filter :user_bot_create,   :only => [:new, :create, :run_all]
-  before_filter :user_bot_control,  :only => [:run, :stop]
+  before_filter :user_access,          :only => [:edit, :update, :show, :destroy]
+  before_filter :user_access_create,   :only => [:new, :create]
+  before_filter :user_access_control,  :only => [:run, :stop, :run_all]
 
   def index
     if !current_user.admin? && current_user.id != params[:user_id].to_i 
@@ -67,7 +67,7 @@ class BotsController < ApplicationController
   end
 
   def run
-    user_bot = initBot(@bot)
+    user_bot = init_bot(@bot)
 
     user_bot.spam if user_bot.logged_in?
 
@@ -84,7 +84,7 @@ class BotsController < ApplicationController
     states = []
 
     User.find(params[:user_id].to_i).bots.each do |bot|
-      user_bot = initBot(bot)
+      user_bot = init_bot(bot)
   
       user_bot.spam if user_bot.logged_in?
 
@@ -97,33 +97,8 @@ class BotsController < ApplicationController
   private
 
     # general method to initialize bot
-    def initBot(bot)
+    def init_bot(bot)
       _bot = ('Bots::' + bot.bot_type.capitalize).constantize.new(bot.id, bot.email, bot.password, bot.page, bot.page_hash, bot.message, bot.count, bot.code)
-    end
-
-    # check user access to all information about bots except listing.
-    def user_bot
-      @bot = current_user.admin? ? Bot.find(params[:id]) : current_user.bots.find(params[:id])
-      user_bot_helper(@bot.user_id)
-    rescue
-      flash_access_denied
-    end
-
-    # check user access to create bots.
-    def user_bot_create
-      user_bot_helper(params[:user_id])
-    end
-
-    # check user access to run/stop bots.
-    def user_bot_control
-      _bot = Bot.find(params[:id])
-      if current_user.admin?
-        @bot = !User.find(_bot.user_id).admin? ? _bot : current_user.bots.find(params[:id])
-      else
-        @bot = current_user.bots.find(params[:id])
-      end
-    rescue
-      respond_to { |format| format.json { render :json => { 'state' => 'access denied' } } }
     end
 
 end

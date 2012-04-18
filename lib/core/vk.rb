@@ -58,6 +58,26 @@ module Core
       @@login_state = 'rus_captcha' if body.match(/\d+<!><!>\d+<!>\d+<!>\d+<!>\d+<!>1/)
     end
 
+    # code - last 4 didgits of a phone number
+    def login_security
+      home_page = @@agent.get(@config.get_value('home_page'))
+
+      if !@code.nil?
+        parse_page(home_page, /hash:\s'([^.]\w*)'/)
+        params = {
+          :act  => 'security_check',
+          :code => @code,
+          :to   => home_page.uri.to_s.match(/to=([^.]*)&/).to_s,
+          :hash => @hash
+        }
+        @hash = nil
+
+        return @@agent.post('http://vk.com/login.php', params)
+      else
+        return home_page
+      end
+    end
+
     def get_hash(id, regexp)
       bot  = Bot.find(id)
       page = @@agent.get(bot.page)
@@ -75,26 +95,6 @@ module Core
       page.search('script').each do |script|
         script.content.match(regexp)
         @hash ||= $1
-        p "#{@hash} - login_security"
-      end
-    end
-
-    # code - last 4 didgits of a phone number
-    def login_security
-      home_page = @@agent.get(@config.get_value('home_page'))
-
-      if !@code.nil?
-        parse_page(home_page, /hash: '([^.]\w*)'/)
-        params = {
-          :act  => 'security_check',
-          :code => @code,
-          :to   => home_page.uri.to_s.match(/to=([^.]*)&/).to_s,
-          :hash => @hash
-        }
-
-        return @@agent.post('http://vk.com/login.php', params)
-      else
-        return home_page
       end
     end
 

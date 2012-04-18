@@ -5,7 +5,6 @@ gem 'rails', '3.2.3'
 gem 'twitter-bootstrap-rails'
 
 gem 'jquery-rails'
-gem 'sqlite3', '1.3.5'
 gem 'gravatar_image_tag'
 gem 'bootstrap-will_paginate'
 
@@ -35,6 +34,6 @@ group :test do
 end
 
 group :development, :test do
-  gem "sqlite3-ruby", "~> 1.3.3", :require => "sqlite3"
+  gem 'sqlite3', '~> 1.3.6'
   gem 'rspec-rails', '~> 2.6'
 end

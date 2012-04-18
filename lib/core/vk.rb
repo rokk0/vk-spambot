@@ -78,24 +78,12 @@ module Core
       end
     end
 
-    def get_hash(id, regexp)
-      bot  = Bot.find(id)
-      page = @@agent.get(bot.page)
-
-      parse_page(page, regexp)
-
-      bot.update_attributes(:page_hash => @hash)
-
-      @hash
-    rescue
-      nil
-    end
-
     def parse_page(page, regexp)
       page.search('script').each do |script|
         script.content.match(regexp)
         @hash ||= $1
       end
+      @hash
     end
 
   end

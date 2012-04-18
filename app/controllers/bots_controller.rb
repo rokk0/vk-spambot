@@ -7,9 +7,10 @@ require 'bots/discussion'
 class BotsController < ApplicationController
   include BotsHelper
 
-  before_filter :user_access,          :only => [:edit, :update, :show, :destroy]
-  before_filter :user_access_create,   :only => [:new, :create]
-  before_filter :user_access_control,  :only => [:run, :stop, :run_all]
+  before_filter :user_access,               :only => [:edit, :update, :show, :destroy]
+  before_filter :user_access_create,        :only => [:new, :create]
+  before_filter :user_access_control,       :only => [:run, :stop]
+  before_filter :user_access_control_all,   :only => [:run_all]
 
   def index
     if !current_user.admin? && current_user.id != params[:user_id].to_i 
@@ -67,11 +68,7 @@ class BotsController < ApplicationController
   end
 
   def run
-    user_bot = init_bot(@bot)
-
-    user_bot.spam if user_bot.logged_in?
-
-    respond_to { |format| format.json { render :json => { 'state' => "##{@bot.id} - #{user_bot.login_state}" } } }
+    respond_to { |format| format.json { render :json => run_bot(@bot) } }
   end
 
   def stop
@@ -84,11 +81,7 @@ class BotsController < ApplicationController
     states = []
 
     User.find(params[:user_id].to_i).bots.each do |bot|
-      user_bot = init_bot(bot)
-  
-      user_bot.spam if user_bot.logged_in?
-
-      states.push("##{bot.id} - #{user_bot.login_state}")
+      states.push(run_bot(bot))
     end
 
     respond_to { |format| format.json { render :json => { 'states' => states } } }
@@ -99,6 +92,20 @@ class BotsController < ApplicationController
     # general method to initialize bot
     def init_bot(bot)
       _bot = ('Bots::' + bot.bot_type.capitalize).constantize.new(bot.id, bot.email, bot.password, bot.page, bot.page_hash, bot.message, bot.count, bot.code)
+    end
+
+    # general method to run bot with hash check
+    def run_bot(bot)
+      _bot = init_bot(bot)
+
+      if _bot.logged_in?
+        if bot.page_hash.empty?
+          bot.update_attributes(:page_hash => _bot.get_hash(bot.page))
+        end
+        _bot.spam
+      end
+
+      return { 'state' => "##{bot.id} - #{_bot.login_state}" }
     end
 
 end

@@ -11,8 +11,12 @@ module Bots
       @msg_count  = 0
 
       @vk.login
+    end
 
-      @hash = @vk.get_hash(id, /"post_hash":"([^.]\w*)"/) if @hash.to_s.empty?
+    def get_hash(page)
+      page = @@agent.get(page)
+
+      @hash = @vk.parse_page(page, /"post_hash":"([^.]\w*)"/)
     end
 
     def spam

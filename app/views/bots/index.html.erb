@@ -20,7 +20,7 @@
       if (result.states != undefined) {
         if(result.states.length > 0) {
           $.each(result.states, function(index, value){
-            print_debug(value);
+            print_debug(value.state);
           });
         } else {
           print_debug('no bots were initialized');

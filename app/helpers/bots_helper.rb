@@ -34,7 +34,7 @@ module BotsHelper
     def user_access_control_all
       user = User.find(params[:user_id])
 
-      if (!current_user?(user) && !current_user.admin?) || (current_user.admin? && user.admin?)
+      unless !user.admin? && current_user.admin? || current_user?(user)
         response_access_denied
       end
 
@@ -46,7 +46,7 @@ module BotsHelper
     def check_user_access(user_id)
       user = User.find(user_id)
 
-      flash_access_denied if (!current_user?(user) && !current_user.admin?) || (current_user.admin? && user.admin?)
+      flash_access_denied unless !user.admin? && current_user.admin? || current_user?(user)
 
     rescue
       flash_user_not_found

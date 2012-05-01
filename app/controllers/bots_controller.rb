@@ -1,8 +1,5 @@
-require 'core/vk'
-require 'bots/group'
-require 'bots/discussion'
-#require 'openwfe/util/scheduler'
-#include OpenWFE
+require 'net/http'
+require 'encryptor'
 
 class BotsController < ApplicationController
   include BotsHelper
@@ -10,13 +7,13 @@ class BotsController < ApplicationController
   before_filter :user_access,               :only => [:edit, :update, :show, :destroy]
   before_filter :user_access_create,        :only => [:new, :create]
   before_filter :user_access_control,       :only => [:run, :stop]
-  before_filter :user_access_control_all,   :only => [:run_all]
+  before_filter :user_access_control_all,   :only => [:run_all, :stop_all]
 
   def index
     if !current_user.admin? && current_user.id != params[:user_id].to_i 
       flash_access_denied
     else
-      @bots  = (current_user.admin? && params[:user_id] ? User.find(params[:user_id]).bots : current_user.bots).paginate(:page => params[:page])
+      @bots  = User.find(params[:user_id]).bots.paginate(:page => params[:page])
       @title = 'Listing bots'
     end
   rescue
@@ -68,44 +65,73 @@ class BotsController < ApplicationController
   end
 
   def run
-    respond_to { |format| format.json { render :json => run_bot(@bot) } }
+    _data = Hash.new(nil)
+    data = @bot.attributes.except("created_at", "updated_at")
+    data.each_pair { |k,v| _data.store(k.to_sym,v.to_s) }
+
+    data = {
+      :bot => Encryptor.encrypt(_data.to_json, :key => $secret_key)
+    }
+
+    begin
+      response = RestClient.post "#{$service_url}/api/bot/run", data, { :content_type => :json, :accept => :json }
+
+      page_title = JSON.parse(response.body)['page_title']
+      unless page_title.nil?
+        @bot.update_attributes(:page_title => page_title)
+      end
+
+      page_hash = JSON.parse(response.body)['page_hash']
+      unless page_hash.nil?
+        @bot.update_attributes(:page_hash => page_hash)
+      end
+
+    rescue => error
+      response = { :status => :error, :message => "##{@bot.id} - #{error}" }
+    end
+
+    respond_to { |format| format.json { render :json => response } }
   end
 
   def stop
-    response = { 'state' => 'ok' }
+    data = { :id => "#{@bot.id}" }
+
+    data = {
+      :bot => Encryptor.encrypt(data.to_json, :key => $secret_key)
+    }
+
+    begin
+      response = RestClient.post "#{$service_url}/api/bot/stop", data, { :content_type => :json, :accept => :json }
+    rescue => error
+      response = { :status => :error, :message => "##{@bot.id} - #{error}" }
+    end
 
     respond_to { |format| format.json { render :json => response } }
   end
 
   def run_all
-    states = []
+    statuses = []
 
     User.find(params[:user_id].to_i).bots.each do |bot|
-      states.push(run_bot(bot))
     end
 
-    respond_to { |format| format.json { render :json => { 'states' => states } } }
+    respond_to { |format| format.json { render :json => { :statuses => statuses } } }
   end
 
-  private
+  def stop_all
+    #params[:user_id]
 
-    # general method to initialize bot
-    def init_bot(bot)
-      _bot = ('Bots::' + bot.bot_type.capitalize).constantize.new(bot.id, bot.email, bot.password, bot.page, bot.page_hash, bot.message, bot.count, bot.code)
+    respond_to { |format| format.json { render :json => {} } }
+  end
+
+  def check_status
+    begin
+      response = RestClient.get "#{$service_url}/api/user/#{params[:user_id]}/bots"
+    rescue
+      response = {}
     end
 
-    # general method to run bot with hash check
-    def run_bot(bot)
-      _bot = init_bot(bot)
-
-      if _bot.logged_in?
-        if bot.page_hash.empty?
-          bot.update_attributes(:page_hash => _bot.get_hash(bot.page))
-        end
-        _bot.spam
-      end
-
-      return { 'state' => "##{bot.id} - #{_bot.login_state}" }
-    end
+    respond_to { |format| format.json { render :json => response } }
+  end
 
 end

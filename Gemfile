@@ -9,8 +9,7 @@ gem 'gravatar_image_tag'
 gem 'bootstrap-will_paginate'
 
 gem 'parseconfig'
-gem 'mechanize'
-gem 'openwferu-scheduler'
+gem 'encryptor'
 
 group :assets do
   gem 'sass-rails', '~> 3.2.3'

@@ -2,25 +2,131 @@
 <% @user = params[:user_id] ? User.find(params[:user_id]) : current_user %>
 
 <script>
+  var ajax_interval = 60000;
+
   $(document).ready(function(){
     debug_row_counter = 1;
     bot_debug_div = $('#bot_debug');
+    get_status();
+    setInterval('get_status()', ajax_interval);
   });
+
+  function get_status() {
+    $.post('/check_status', { user_id : <%= @user.id %> }, function(result){
+      for(var bot_id in result){
+        if (result.hasOwnProperty(bot_id)){
+          if (result[bot_id]['status'] == 'error') {
+            setTimeout('status_clear(' + bot_id + ')', ajax_interval);
+            status_set_error(bot_id, result[bot_id]['message']);
+          } else if (result[bot_id]['status'] == 'warning') {
+            status_set_warning(bot_id, result[bot_id]['message']);
+          } else {
+            status_set_running(bot_id, result[bot_id]['message']);
+          }
+        }
+      }
+    });
+  }
+
+  function status_clear(id) {
+    console.log(id)
+    $('#status_' + id).text('N/A');
+    $('#status_' + id).removeClass('label-success label-important label-warning');
+
+    $('#bot_' + id + '_btn').removeClass('btn-danger').addClass('btn-success');
+    $('#bot_' + id + '_btn').text('Run');
+    $('#bot_' + id + '_btn').attr('onclick', 'run(' + id + '); return false;');
+  }
+
+  function status_set_stopped(id, message) {
+    $('#status_' + id).text(message == null ? 'stopped' : message);
+    $('#status_' + id).removeClass('label-success label-important label-warning').addClass('label-important');
+
+    $('#bot_' + id + '_btn').removeClass('btn-danger').addClass('btn-success');
+    $('#bot_' + id + '_btn').text('Run');
+    $('#bot_' + id + '_btn').attr('onclick', 'run(' + id + '); return false;');
+  }
+
+  function status_set_error(id, message) {
+    $('#status_' + id).text(message == null ? 'error' : message);
+    $('#status_' + id).removeClass('label-success label-important label-warning').addClass('label-important');
+
+    $('#bot_' + id + '_btn').removeClass('btn-danger').addClass('btn-success');
+    $('#bot_' + id + '_btn').text('Run');
+    $('#bot_' + id + '_btn').attr('onclick', 'run(' + id + '); return false;');
+  }
+
+  function status_set_running(id, message) {
+    $('#status_' + id).text(message == null ? 'running' : message);
+    $('#status_' + id).removeClass('label-success label-important label-warning').addClass('label-success');
+
+    $('#bot_' + id + '_btn').removeClass('btn-success').addClass('btn-danger');
+    $('#bot_' + id + '_btn').text('Stop');
+    $('#bot_' + id + '_btn').attr('onclick', 'stop(' + id + '); return false;');
+  }
+
+  function status_set_warning(id, message) {
+    $('#status_' + id).text(message == null ? 'warning' : message);
+    $('#status_' + id).removeClass('label-success label-important label-warning').addClass('label-warning');
+
+    $('#bot_' + id + '_btn').removeClass('btn-success').addClass('btn-danger');
+    $('#bot_' + id + '_btn').text('Stop');
+    $('#bot_' + id + '_btn').attr('onclick', 'stop(' + id + '); return false;');
+  }
 
   function print_debug(value) {
     bot_debug_div.html(debug_row_counter + ': ' + value + '<br />' + bot_debug_div.html());
     debug_row_counter += 1;
   }
 
+  function run(id) {
+    $('#bot_' + id + '_btn').toggleClass('disabled');
+    $('#bot_' + id + '_btn').attr('onclick', 'return false;');
+
+    $.post('/run', { id : id }, function(result){
+      print_debug(result.message);
+
+      if (result.page_title != undefined && result.page_title != '') {
+        $('#link_title_' + id).text(result.page_title);
+      }
+
+      if (result.status == 'ok') {
+        status_set_running(id, result.message);
+        $('#bot_' + id + '_btn').toggleClass('disabled');
+      } else if (result.status == 'warning') {
+        status_set_warning(id, result.message);
+        $('#bot_' + id + '_btn').toggleClass('disabled');
+      } else {
+        setTimeout('status_clear(' + id + ')', ajax_interval);
+        status_set_error(id, result.message)
+        $('#bot_' + id + '_btn').toggleClass('disabled');
+      }
+    });
+  }
+
+  function stop(id) {
+    $('#bot_' + id + '_btn').toggleClass('disabled');
+    $('#bot_' + id + '_btn').attr('onclick', 'return false;');
+
+    $.post('/stop', { id : id }, function(result){
+      print_debug(result.message);
+      if (result.status == 'stopped') {
+        setTimeout('status_clear(' + id + ')', ajax_interval);
+        status_set_stopped(id, result.message);
+        $('#bot_' + id + '_btn').toggleClass('disabled');
+      }
+    });
+  }
+/*
   function run_all() {
     $('#run_all_btn').toggleClass('disabled');
     $('#run_all_btn').attr('onclick', 'return false;');
 
     $.post('/run_all', { user_id : <%= @user.id %>}, function(result){
-      if (result.states != undefined) {
-        if(result.states.length > 0) {
-          $.each(result.states, function(index, value){
-            print_debug(value.state);
+      if (result.statuses != undefined) {
+        if (result.statuses.length > 0) {
+          $.each(result.statuses, function(index, value){
+            print_debug(value.status);
           });
         } else {
           print_debug('no bots were initialized');
@@ -33,19 +139,16 @@
       $('#run_all_btn').attr('onclick', 'run_all(); return false;');
     });
   }
+*/
+  function stop_all() {
+    $('#stop_all_btn').toggleClass('disabled');
+    $('#stop_all_btn').attr('onclick', 'return false;');
 
-  function run(id) {
-    $('#run_' + id + '_btn').toggleClass('disabled');
-    $('#run_' + id + '_btn').attr('onclick', 'return false;');
-
-    $.post('/run', { id : id }, function(result){
-      print_debug(result.state);
-      $('#run_' + id + '_btn').toggleClass('disabled');
-      $('#run_' + id + '_btn').attr('onclick', 'run(' + id + '); return false;');
+    $.post('/stop_all', { user_id : <%= @user.id %>}, function(result){
+      $('#stop_all_btn').toggleClass('disabled');
+      $('#stop_all_btn').attr('onclick', 'stop_all(); return false;');
     });
   }
-
-  function stop(id) {}
 </script>
 
 <h1><%= raw("#{t('.title', :default => model_class.model_name.human.pluralize)} (#{link_to @user.name, @user})")%> </h1>
@@ -57,11 +160,10 @@
       <th><%= model_class.human_attribute_name(:email) %></th>
       <th><%= model_class.human_attribute_name(:bot_type) %></th>
       <th><%= model_class.human_attribute_name(:page) %></th>
-      <th><%= model_class.human_attribute_name(:page_hash) %></th>
-      <th><%= model_class.human_attribute_name(:message) %></th>
       <th><%= model_class.human_attribute_name(:count) %></th>
       <th><%= model_class.human_attribute_name(:interval) %></th>
       <th><%= model_class.human_attribute_name(:created_at) %></th>
+      <th><%= model_class.human_attribute_name(:status) %></th>
       <th><%=t '.actions', :default => t("helpers.actions") %></th>
     </tr>
   </thead>
@@ -71,19 +173,18 @@
         <td><%= bot.id %></td>
         <td><%= bot.email %></td>
         <td><span class="label"><%= bot.bot_type %></span></td>
-        <td><%= link_to bot.page, bot.page %></td>
-        <td><%= bot.page_hash %></td>
-        <td><%= bot.message %></td>
+        <td><%= link_to bot.page_title.empty? ? 'N/A' : bot.page_title, bot.page, :id => "link_title_#{bot.id}" %></td>
         <td><span class="badge badge-info"><%= bot.count %></span></td>
         <td><span class="badge badge-info"><%= bot.interval %></span></td>
         <td><%= bot.created_at.strftime("%d/%m/%Y") %></td>
+        <td><span id="status_<%= bot.id %>" name="bot_status" class="label">N/A</span></td>
         <td class='bots_list_control left'>
           <% if current_user?(@user) || current_user.admin? && !@user.admin? %>
             <%= link_to 'Run',
                         '#',
                         :onclick => 'run("' + bot.id.to_s + '"); return false;',
                         :class => 'btn btn-mini btn-success',
-                        :id => 'run_' + bot.id.to_s + '_btn' %>
+                        :id => 'bot_' + bot.id.to_s + '_btn' %>
             <%= link_to raw("<i class='icon-eye-open'></i> #{t('.view', :default => t("helpers.links.view"))}"),
                         bot_path(bot), :class => 'btn btn-mini' %>
             <%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
@@ -101,11 +202,11 @@
 </table>
 
 <% if @user && !@user.admin? && current_user.admin? || current_user?(@user) %>
-  <%= link_to 'Run All',
+  <%= link_to 'Stop All',
               '#',
-              :onclick => 'run_all(); return false;',
-              :class => 'btn btn-success',
-              :id => 'run_all_btn' %>
+              :onclick => 'stop_all(); return false;',
+              :class => 'btn btn-danger',
+              :id => 'stop_all_btn' %>
   <%= link_to t('.new', :default => t("helpers.links.new")),
             new_user_bot_path(@user),
             :class => 'btn btn-primary' %>

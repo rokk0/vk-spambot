@@ -1,5 +1,5 @@
 class Bot < ActiveRecord::Base
-  attr_accessible :user_id, :email, :password, :bot_type, :page, :page_hash, :message, :count, :interval, :code
+  attr_accessible :user_id, :email, :password, :bot_type, :page, :page_title, :page_hash, :message, :count, :interval, :code
 
   belongs_to :user
 

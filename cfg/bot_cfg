@@ -1,2 +1,2 @@
-user_agent_alias  = 'Linux Mozilla'
-home_page        = 'http://vk.com'
+service_url       = 'http://localhost:5679'
+secret_key        = '123123'

@@ -16,9 +16,11 @@ VkSpambot::Application.routes.draw do
   match '/about',   :to => 'pages#about'
   match '/help',    :to => 'pages#help'
 
-  match '/run',     :to => 'bots#run'
-  match '/stop',    :to => 'bots#stop'
-  match '/run_all', :to => 'bots#run_all'
+  match '/run',           :to => 'bots#run'
+  match '/stop',          :to => 'bots#stop'
+  match '/run_all',       :to => 'bots#run_all'
+  match '/stop_all',      :to => 'bots#stop_all'
+  match '/check_status',  :to => 'bots#check_status'
 
   match '/users/:user_id/bots/new'  => 'bots#create',  :via => :post,    :as => 'create_bot'
   match '/bots/:id/edit'            => 'bots#update',  :via => :put,     :as => 'update_bot'

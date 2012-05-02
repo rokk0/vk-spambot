@@ -1,4 +1,4 @@
-# Bot configuration (bot_cfg):
+# Bot configuration (bot_cfg):  
 
->>service_url = 'http://localhost:5679'
-secret_key = '123123'
+>>service_url = 'http://localhost:5679'  
+secret_key = '123123'  

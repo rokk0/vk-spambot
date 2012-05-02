@@ -18,10 +18,10 @@ module BotsHelper
 
     # check user access to run/stop bots.
     def user_access_control
-      _bot = Bot.find(params[:id])
+      bot = Bot.find(params[:id])
 
       if current_user.admin?
-        @bot = !User.find(_bot.user_id).admin? ? _bot : current_user.bots.find(params[:id])
+        @bot = User.find(bot.user_id).admin? ? current_user.bots.find(params[:id]) : bot
       else
         @bot = current_user.bots.find(params[:id])
       end

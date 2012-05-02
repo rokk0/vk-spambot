@@ -10,7 +10,7 @@ class BotsController < ApplicationController
   before_filter :user_access_control_all,   :only => [:run_all, :stop_all]
 
   def index
-    if !current_user.admin? && current_user.id != params[:user_id].to_i 
+    if current_user.id != params[:user_id].to_i && !current_user.admin?
       flash_access_denied
     else
       @bots  = User.find(params[:user_id]).bots.paginate(:page => params[:page])
@@ -55,23 +55,21 @@ class BotsController < ApplicationController
   end
 
   def destroy
-    _user = User.find(@bot.user_id)
-    if !current_user?(_user) && _user.admin? && current_user.admin?
+    user = User.find(@bot.user_id)
+    if user.admin? && !current_user?(user) && current_user.admin?
       flash_access_denied
     else
       @bot.destroy
-      redirect_to user_bots_path(_user.id), :flash => { :success => 'Bot destroyed.' }
+      redirect_to user_bots_path(user.id), :flash => { :success => 'Bot destroyed.' }
     end
   end
 
   def run
-    _data = Hash.new(nil)
-    data = @bot.attributes.except("created_at", "updated_at")
-    data.each_pair { |k,v| _data.store(k.to_sym,v.to_s) }
+    data = Hash.new
+    bot_data = @bot.attributes.except("created_at", "updated_at")
+    bot_data.each_pair { |k,v| data.store(k.to_sym,v.to_s) }
 
-    data = {
-      :bot => Encryptor.encrypt(_data.to_json, :key => $secret_key)
-    }
+    data = { :bot => Encryptor.encrypt(data.to_json, :key => $secret_key) }
 
     begin
       response = RestClient.post "#{$service_url}/api/bot/run", data, { :content_type => :json, :accept => :json }

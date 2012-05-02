@@ -48,12 +48,12 @@ class UsersController < ApplicationController
 
   def destroy
     if @user.admin?
-      _flash = { :error => 'Administrator cannot be destroyed.' }
+      flash = { :error => 'Administrator cannot be destroyed.' }
     else
       @user.destroy
-      _flash = { :success => 'User destroyed.' }
+      flash = { :success => 'User destroyed.' }
     end
-    redirect_to :back, :flash => _flash
+    redirect_to :back, :flash => flash
   end
 
 end

@@ -14,7 +14,7 @@ module UsersHelper
 
     def correct_user
       @user = User.find(params[:id])
-      if !current_user?(@user) && ( !current_user.admin? || @user.admin? )
+      if (@user.admin? || !current_user.admin?) && !current_user?(@user)
         flash_access_denied
       end
     end

@@ -3,6 +3,7 @@
 
 <script>
   var ajax_interval = 60000;
+  var bot_debug_div = null;
 
   $(document).ready(function(){
     debug_row_counter = 1;
@@ -12,24 +13,34 @@
   });
 
   function get_status() {
-    $.post('/check_status', { user_id : <%= @user.id %> }, function(result){
-      for(var bot_id in result){
-        if (result.hasOwnProperty(bot_id)){
-          if (result[bot_id]['status'] == 'error') {
-            setTimeout('status_clear(' + bot_id + ')', ajax_interval);
-            status_set_error(bot_id, result[bot_id]['message']);
-          } else if (result[bot_id]['status'] == 'warning') {
-            status_set_warning(bot_id, result[bot_id]['message']);
-          } else {
-            status_set_running(bot_id, result[bot_id]['message']);
+    $.ajax({
+        type: 'POST',
+        url: '/check_status',
+        async: true,
+        cache: false,
+
+        data: { user_id : <%= @user.id %> },
+        dataType: 'json',
+
+        success: function(result){
+          for(var bot_id in result){
+            if (result.hasOwnProperty(bot_id)){
+              if (result[bot_id]['status'] == 'error') {
+                setTimeout('status_clear(' + bot_id + ')', ajax_interval);
+                status_set_error(bot_id, result[bot_id]['message']);
+              } else if (result[bot_id]['status'] == 'warning') {
+                status_set_warning(bot_id, result[bot_id]['message']);
+              } else {
+                status_set_running(bot_id, result[bot_id]['message']);
+              }
+            }
           }
         }
-      }
     });
   }
 
+
   function status_clear(id) {
-    console.log(id)
     $('#status_' + id).text('N/A');
     $('#status_' + id).removeClass('label-success label-important label-warning');
 
@@ -83,24 +94,34 @@
     $('#bot_' + id + '_btn').toggleClass('disabled');
     $('#bot_' + id + '_btn').attr('onclick', 'return false;');
 
-    $.post('/run', { id : id }, function(result){
-      print_debug(result.message);
+    $.ajax({
+        type: 'POST',
+        url: '/run',
+        async: true,
+        cache: false,
 
-      if (result.page_title != undefined && result.page_title != '') {
-        $('#link_title_' + id).text(result.page_title);
-      }
+        data: { id : id },
+        dataType: 'json',
 
-      if (result.status == 'ok') {
-        status_set_running(id, result.message);
-        $('#bot_' + id + '_btn').toggleClass('disabled');
-      } else if (result.status == 'warning') {
-        status_set_warning(id, result.message);
-        $('#bot_' + id + '_btn').toggleClass('disabled');
-      } else {
-        setTimeout('status_clear(' + id + ')', ajax_interval);
-        status_set_error(id, result.message)
-        $('#bot_' + id + '_btn').toggleClass('disabled');
-      }
+        success: function(result){
+          print_debug(result.message);
+
+          if (result.page_title != undefined && result.page_title != '') {
+            $('#link_title_' + id).text(result.page_title);
+          }
+
+          if (result.status == 'ok') {
+            status_set_running(id, result.message);
+            $('#bot_' + id + '_btn').toggleClass('disabled');
+          } else if (result.status == 'warning') {
+            status_set_warning(id, result.message);
+            $('#bot_' + id + '_btn').toggleClass('disabled');
+          } else {
+            setTimeout('status_clear(' + id + ')', ajax_interval);
+            status_set_error(id, result.message)
+            $('#bot_' + id + '_btn').toggleClass('disabled');
+          }
+        }
     });
   }
 
@@ -108,45 +129,52 @@
     $('#bot_' + id + '_btn').toggleClass('disabled');
     $('#bot_' + id + '_btn').attr('onclick', 'return false;');
 
-    $.post('/stop', { id : id }, function(result){
-      print_debug(result.message);
-      if (result.status == 'stopped') {
-        setTimeout('status_clear(' + id + ')', ajax_interval);
-        status_set_stopped(id, result.message);
-        $('#bot_' + id + '_btn').toggleClass('disabled');
-      }
+    $.ajax({
+        type: 'POST',
+        url: '/stop',
+        async: true,
+        cache: false,
+
+        data: { id : id },
+        dataType: 'json',
+
+        success: function(result){
+          print_debug(result.message);
+          if (result.status == 'stopped') {
+            setTimeout('status_clear(' + id + ')', ajax_interval);
+            status_set_stopped(id, result.message);
+            $('#bot_' + id + '_btn').toggleClass('disabled');
+          }
+        }
     });
   }
+
 /*
   function run_all() {
     $('#run_all_btn').toggleClass('disabled');
     $('#run_all_btn').attr('onclick', 'return false;');
 
-    $.post('/run_all', { user_id : <%= @user.id %>}, function(result){
-      if (result.statuses != undefined) {
-        if (result.statuses.length > 0) {
-          $.each(result.statuses, function(index, value){
-            print_debug(value.status);
-          });
-        } else {
-          print_debug('no bots were initialized');
-        }
-      } else {
-        print_debug('spambot error');
-      }
-
-      $('#run_all_btn').toggleClass('disabled');
-      $('#run_all_btn').attr('onclick', 'run_all(); return false;');
-    });
+    //AJAX here
   }
 */
+
   function stop_all() {
     $('#stop_all_btn').toggleClass('disabled');
     $('#stop_all_btn').attr('onclick', 'return false;');
 
-    $.post('/stop_all', { user_id : <%= @user.id %>}, function(result){
-      $('#stop_all_btn').toggleClass('disabled');
-      $('#stop_all_btn').attr('onclick', 'stop_all(); return false;');
+    $.ajax({
+        type: 'POST',
+        url: '/stop_all',
+        async: true,
+        cache: false,
+
+        data: { user_id : <%= @user.id %>},
+        dataType: 'json',
+
+        success: function(result){
+          $('#stop_all_btn').toggleClass('disabled');
+          $('#stop_all_btn').attr('onclick', 'stop_all(); return false;');
+        }
     });
   }
 </script>

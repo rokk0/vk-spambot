@@ -83,9 +83,7 @@ class BotsController < ApplicationController
   end
 
   def stop_all
-    #params[:user_id]
-
-    respond_to { |format| format.json { render :json => {} } }
+    respond_to { |format| format.json { render :json => @user.stop_bots } }
   end
 
   def check_status

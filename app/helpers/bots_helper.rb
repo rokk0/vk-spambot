@@ -32,9 +32,9 @@ module BotsHelper
 
     # check user access to run/stop all bots by user_id
     def user_access_control_all
-      user = User.find(params[:user_id])
+      @user = User.find(params[:user_id])
 
-      unless !user.admin? && current_user.admin? || current_user?(user)
+      unless !@user.admin? && current_user.admin? || current_user?(@user)
         response_access_denied
       end
 

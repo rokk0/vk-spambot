@@ -50,6 +50,7 @@ class UsersController < ApplicationController
     if @user.admin?
       flash = { :error => 'Administrator cannot be destroyed.' }
     else
+      @user.stop_bots
       @user.destroy
       flash = { :success => 'User destroyed.' }
     end

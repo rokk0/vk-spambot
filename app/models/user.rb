@@ -36,6 +36,14 @@ class User < ActiveRecord::Base
 
   before_save :encrypt_password
 
+  # Trying to stop all user bots in our sinatra part
+  def stop_bots
+    data = { :user => Encryptor.encrypt({:user_id => id}.to_json, :key => $secret_key) }
+    RestClient.post "#{$service_url}/api/bot/stop_user_bots", data, { :content_type => :json, :accept => :json }
+  rescue => error
+    { :status => :error, :message => "#{error}" }
+  end
+
   def validate_password?
     new_record? || !password.blank?
   end

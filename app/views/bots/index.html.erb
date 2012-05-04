@@ -39,50 +39,24 @@
     });
   }
 
-
   function status_clear(id) {
-    $('#status_' + id).text('N/A');
-    $('#status_' + id).removeClass('label-success label-important label-warning');
-
-    $('#bot_' + id + '_btn').removeClass('btn-danger').addClass('btn-success');
-    $('#bot_' + id + '_btn').text('Run');
-    $('#bot_' + id + '_btn').attr('onclick', 'run(' + id + '); return false;');
+    change_status(id, 'N/A', 'N/A', '', 'btn-success', 'Run', 'run(' + id + '); return false;');
   }
 
   function status_set_stopped(id, message) {
-    $('#status_' + id).text(message == null ? 'stopped' : message);
-    $('#status_' + id).removeClass('label-success label-important label-warning').addClass('label-important');
-
-    $('#bot_' + id + '_btn').removeClass('btn-danger').addClass('btn-success');
-    $('#bot_' + id + '_btn').text('Run');
-    $('#bot_' + id + '_btn').attr('onclick', 'run(' + id + '); return false;');
+    change_status(id, message, 'stopped', 'label-important', 'btn-success', 'Run', 'run(' + id + '); return false;');
   }
 
   function status_set_error(id, message) {
-    $('#status_' + id).text(message == null ? 'error' : message);
-    $('#status_' + id).removeClass('label-success label-important label-warning').addClass('label-important');
-
-    $('#bot_' + id + '_btn').removeClass('btn-danger').addClass('btn-success');
-    $('#bot_' + id + '_btn').text('Run');
-    $('#bot_' + id + '_btn').attr('onclick', 'run(' + id + '); return false;');
+    change_status(id, message, 'error', 'label-important', 'btn-success', 'Run', 'run(' + id + '); return false;');
   }
 
   function status_set_running(id, message) {
-    $('#status_' + id).text(message == null ? 'running' : message);
-    $('#status_' + id).removeClass('label-success label-important label-warning').addClass('label-success');
-
-    $('#bot_' + id + '_btn').removeClass('btn-success').addClass('btn-danger');
-    $('#bot_' + id + '_btn').text('Stop');
-    $('#bot_' + id + '_btn').attr('onclick', 'stop(' + id + '); return false;');
+    change_status(id, message, 'running', 'label-success', 'btn-danger', 'Stop', 'stop(' + id + '); return false;');
   }
 
   function status_set_warning(id, message) {
-    $('#status_' + id).text(message == null ? 'warning' : message);
-    $('#status_' + id).removeClass('label-success label-important label-warning').addClass('label-warning');
-
-    $('#bot_' + id + '_btn').removeClass('btn-success').addClass('btn-danger');
-    $('#bot_' + id + '_btn').text('Stop');
-    $('#bot_' + id + '_btn').attr('onclick', 'stop(' + id + '); return false;');
+    change_status(id, message, 'warning', 'label-warning', 'btn-danger', 'Stop', 'stop(' + id + '); return false;');
   }
 
   function print_debug(value) {
@@ -90,9 +64,43 @@
     debug_row_counter += 1;
   }
 
+  function change_status(id, message, default_message, label_class, btn_class, btn_text, btn_function) {
+    var bot_status = $('#status_' + id);
+
+    bot_status.text(message == null ? default_message : message);
+    bot_status.removeClass('label-success label-important label-warning').addClass(label_class);
+
+    var bot_btn = $('#bot_' + id + '_btn');
+    bot_btn.removeClass('btn-danger btn-success').addClass(btn_class);
+    bot_btn.text(btn_text);
+    bot_btn.attr('onclick', btn_function);
+  }
+
+  function status_clear_all() {
+    var bot_status = $('[name=bot_status]');
+
+    bot_status.toggleClass('disabled');
+    bot_status.text('N/A');
+    bot_status.removeClass('label-success label-important label-warning');
+
+    var bot_btn = $('[name=bot_btn]');
+
+    bot_btn.removeClass('btn-danger btn-success').addClass('btn-success');
+    bot_btn.text('Run');
+
+    var regexp = /bot_(\d+)_btn/;
+
+    bot_btn.each(function () {
+      bot_id = $(this).context.id.match(regexp, "$1");
+      $('#bot_' + bot_id[1] + '_btn').attr('onclick', 'run(' + bot_id[1] + '); return false;');
+    });
+  }
+
   function run(id) {
-    $('#bot_' + id + '_btn').toggleClass('disabled');
-    $('#bot_' + id + '_btn').attr('onclick', 'return false;');
+    var bot_btn = $('#bot_' + id + '_btn');
+
+    bot_btn.toggleClass('disabled');
+    bot_btn.attr('onclick', 'return false;');
 
     $.ajax({
         type: 'POST',
@@ -112,22 +120,24 @@
 
           if (result.status == 'ok') {
             status_set_running(id, result.message);
-            $('#bot_' + id + '_btn').toggleClass('disabled');
+            bot_btn.toggleClass('disabled');
           } else if (result.status == 'warning') {
             status_set_warning(id, result.message);
-            $('#bot_' + id + '_btn').toggleClass('disabled');
+            bot_btn.toggleClass('disabled');
           } else {
             setTimeout('status_clear(' + id + ')', ajax_interval);
             status_set_error(id, result.message)
-            $('#bot_' + id + '_btn').toggleClass('disabled');
+            bot_btn.toggleClass('disabled');
           }
         }
     });
   }
 
   function stop(id) {
-    $('#bot_' + id + '_btn').toggleClass('disabled');
-    $('#bot_' + id + '_btn').attr('onclick', 'return false;');
+    var bot_btn = $('#bot_' + id + '_btn');
+
+    bot_btn.toggleClass('disabled');
+    bot_btn.attr('onclick', 'return false;');
 
     $.ajax({
         type: 'POST',
@@ -143,7 +153,7 @@
           if (result.status == 'stopped') {
             setTimeout('status_clear(' + id + ')', ajax_interval);
             status_set_stopped(id, result.message);
-            $('#bot_' + id + '_btn').toggleClass('disabled');
+            bot_btn.toggleClass('disabled');
           }
         }
     });
@@ -159,8 +169,10 @@
 */
 
   function stop_all() {
-    $('#stop_all_btn').toggleClass('disabled');
-    $('#stop_all_btn').attr('onclick', 'return false;');
+    var stop_all_btn = $('#stop_all_btn');
+
+    stop_all_btn.toggleClass('disabled');
+    stop_all_btn.attr('onclick', 'return false;');
 
     $.ajax({
         type: 'POST',
@@ -172,8 +184,9 @@
         dataType: 'json',
 
         success: function(result){
-          $('#stop_all_btn').toggleClass('disabled');
-          $('#stop_all_btn').attr('onclick', 'stop_all(); return false;');
+          status_clear_all();
+          stop_all_btn.toggleClass('disabled');
+          stop_all_btn.attr('onclick', 'stop_all(); return false;');
         }
     });
   }
@@ -210,9 +223,10 @@
           <% if current_user?(@user) || current_user.admin? && !@user.admin? %>
             <%= link_to 'Run',
                         '#',
-                        :onclick => 'run("' + bot.id.to_s + '"); return false;',
+                        :onclick => 'run(' + bot.id.to_s + '); return false;',
                         :class => 'btn btn-mini btn-success',
-                        :id => 'bot_' + bot.id.to_s + '_btn' %>
+                        :id => 'bot_' + bot.id.to_s + '_btn',
+                        :name => 'bot_btn' %>
             <%= link_to raw("<i class='icon-eye-open'></i> #{t('.view', :default => t("helpers.links.view"))}"),
                         bot_path(bot), :class => 'btn btn-mini' %>
             <%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),

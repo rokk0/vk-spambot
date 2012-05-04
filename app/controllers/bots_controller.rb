@@ -59,6 +59,7 @@ class BotsController < ApplicationController
     if user.admin? && !current_user?(user) && current_user.admin?
       flash_access_denied
     else
+      @bot.stop
       @bot.destroy
       redirect_to user_bots_path(user.id), :flash => { :success => 'Bot destroyed.' }
     end

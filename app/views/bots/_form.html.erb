@@ -46,12 +46,14 @@
       <%= f.text_field :page_title, :class => 'text_field' %>
     </div>
   </div>
-  <div class="control-group">
-    <%= f.label :page_hash, :class => 'control-label' %>
-    <div class="controls">
-      <%= f.text_field :page_hash, :class => 'text_field' %>
-    </div>
-  </div>
+  <% if current_user.admin? %>
+	  <div class="control-group">
+		<%= f.label :page_hash, :class => 'control-label' %>
+		<div class="controls">
+		  <%= f.text_field :page_hash, :class => 'text_field' %>
+		</div>
+	  </div>
+  <% end %>
   <div class="control-group">
     <%= f.label :message, :class => 'control-label required' %>
     <div class="controls">

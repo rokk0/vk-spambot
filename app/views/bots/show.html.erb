@@ -24,10 +24,12 @@
   <strong><%= model_class.human_attribute_name(:page_title) %>:</strong>
   <%= @bot.page_title %>
 </p>
-<p>
-  <strong><%= model_class.human_attribute_name(:page_hash) %>:</strong>
-  <%= @bot.page_hash %>
-</p>
+<% if current_user.admin? %>
+	<p>
+	  <strong><%= model_class.human_attribute_name(:page_hash) %>:</strong>
+	  <%= @bot.page_hash %>
+	</p>
+<% end %>
 <p>
   <strong><%= model_class.human_attribute_name(:message) %>:</strong>
   <%= @bot.message %>

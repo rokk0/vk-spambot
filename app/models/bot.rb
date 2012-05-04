@@ -32,6 +32,43 @@ class Bot < ActiveRecord::Base
 
   before_save :check_password
 
+  # Go, go, go!
+  def run
+    data = {}
+    bot_data = attributes.except("created_at", "updated_at")
+    bot_data.each_pair { |k,v| data.store(k.to_sym,v.to_s) }
+
+    data = { :bot => Encryptor.encrypt(data.to_json, :key => $secret_key) }
+
+    response = RestClient.post "#{$service_url}/api/bot/run", data, { :content_type => :json, :accept => :json }
+    update_title_and_hash(response)
+  rescue => error
+    { :status => :error, :message => "##{id} - #{error}" }
+  end
+
+  # Trying to stop the bot in our sinatra part
+  def stop
+    data = { :bot => Encryptor.encrypt({:id => id}.to_json, :key => $secret_key) }
+    RestClient.post "#{$service_url}/api/bot/stop", data, { :content_type => :json, :accept => :json }
+  rescue => error
+    { :status => :error, :message => "##{id} - #{error}" }
+  end
+
+  # We need to update our db entry with data that returned from sinatra
+  def update_title_and_hash(response)
+    page_title = JSON.parse(response.body)['page_title']
+    unless page_title.nil?
+      update_attributes(:page_title => page_title)
+    end
+
+    page_hash = JSON.parse(response.body)['page_hash']
+    unless page_hash.nil?
+      update_attributes(:page_hash => page_hash)
+    end
+    
+    response
+  end
+
   private
 
     def validate_password?

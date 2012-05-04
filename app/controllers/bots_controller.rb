@@ -65,46 +65,11 @@ class BotsController < ApplicationController
   end
 
   def run
-    data = Hash.new
-    bot_data = @bot.attributes.except("created_at", "updated_at")
-    bot_data.each_pair { |k,v| data.store(k.to_sym,v.to_s) }
-
-    data = { :bot => Encryptor.encrypt(data.to_json, :key => $secret_key) }
-
-    begin
-      response = RestClient.post "#{$service_url}/api/bot/run", data, { :content_type => :json, :accept => :json }
-
-      page_title = JSON.parse(response.body)['page_title']
-      unless page_title.nil?
-        @bot.update_attributes(:page_title => page_title)
-      end
-
-      page_hash = JSON.parse(response.body)['page_hash']
-      unless page_hash.nil?
-        @bot.update_attributes(:page_hash => page_hash)
-      end
-
-    rescue => error
-      response = { :status => :error, :message => "##{@bot.id} - #{error}" }
-    end
-
-    respond_to { |format| format.json { render :json => response } }
+    respond_to { |format| format.json { render :json => @bot.run } }
   end
 
   def stop
-    data = { :id => "#{@bot.id}" }
-
-    data = {
-      :bot => Encryptor.encrypt(data.to_json, :key => $secret_key)
-    }
-
-    begin
-      response = RestClient.post "#{$service_url}/api/bot/stop", data, { :content_type => :json, :accept => :json }
-    rescue => error
-      response = { :status => :error, :message => "##{@bot.id} - #{error}" }
-    end
-
-    respond_to { |format| format.json { render :json => response } }
+    respond_to { |format| format.json { render :json => @bot.stop } }
   end
 
   def run_all

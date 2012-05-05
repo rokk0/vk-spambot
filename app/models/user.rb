@@ -12,6 +12,7 @@
 #
 
 require 'digest'
+
 class User < ActiveRecord::Base
   attr_accessor :password
   attr_accessible :name, :email, :password, :password_confirmation
@@ -36,12 +37,25 @@ class User < ActiveRecord::Base
 
   before_save :encrypt_password
 
+  # Trying to run all user bots in our sinatra part
+  def run_bots
+    statuses = {}
+
+    bots.each do |bot|
+      statuses[bot.id] = bot.run
+    end
+
+    statuses
+  rescue => error
+    { :status => :error, :message => error.to_s }
+  end
+
   # Trying to stop all user bots in our sinatra part
   def stop_bots
     data = { :user => Encryptor.encrypt({:user_id => id}.to_json, :key => $secret_key) }
     RestClient.post "#{$service_url}/api/bot/stop_user_bots", data, { :content_type => :json, :accept => :json }
   rescue => error
-    { :status => :error, :message => "#{error}" }
+    { :status => :error, :message => error.to_s }
   end
 
   def validate_password?

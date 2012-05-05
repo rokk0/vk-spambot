@@ -53,7 +53,7 @@ module BotsHelper
     end
 
     def response_access_denied
-      respond_to { |format| format.json { render :json => { 'state' => 'access denied' } } }
+      respond_to { |format| format.json { render :json => { :status => :error, :message => 'access denied' } } }
     end
 
 end

@@ -30,6 +30,11 @@ class BotsController < ApplicationController
 
   def edit
     @bot.password = nil
+
+    interval      = @bot.interval.scan(/(\d+)h(\d+)m/).flatten
+    @bot.hours    = interval.first
+    @bot.minutes  = interval.second
+
     @title = 'Edit bot'
   end
 
@@ -38,7 +43,7 @@ class BotsController < ApplicationController
     @bot = Bot.new(params[:bot])
 
     if @bot.save
-      redirect_to @bot, :flash => { :success => 'Bot was successfully created.' }
+      redirect_to user_bots_path(@bot.user_id), :flash => { :success => 'Bot was successfully created.' }
     else
       @title = 'New bot'
       render 'new'
@@ -47,7 +52,7 @@ class BotsController < ApplicationController
 
   def update
     if @bot.update_attributes(params[:bot])
-      redirect_to @bot, :flash => { :success => 'Bot was successfully updated.' }
+      redirect_to user_bots_path(@bot.user_id), :flash => { :success => 'Bot was successfully updated.' }
     else
       @title = 'Edit bot'
       render 'edit'
@@ -60,6 +65,13 @@ class BotsController < ApplicationController
       flash_access_denied
     else
       @bot.stop
+
+      # To stop bot after 10 seconds if bot destroyed in short period of time after 'run' request
+      Thread.new do
+        sleep 10
+        @bot.stop
+      end
+
       @bot.destroy
       redirect_to user_bots_path(user.id), :flash => { :success => 'Bot destroyed.' }
     end
@@ -74,12 +86,7 @@ class BotsController < ApplicationController
   end
 
   def run_all
-    statuses = []
-
-    User.find(params[:user_id].to_i).bots.each do |bot|
-    end
-
-    respond_to { |format| format.json { render :json => { :statuses => statuses } } }
+    respond_to { |format| format.json { render :json => { :statuses => @user.run_bots } } }
   end
 
   def stop_all

@@ -51,6 +51,13 @@ class UsersController < ApplicationController
       flash = { :error => 'Administrator cannot be destroyed.' }
     else
       @user.stop_bots
+
+      # To stop bots after (bots.count * 10) seconds if user destroyed in short period of time after 'run' request
+      Thread.new do
+        sleep @user.bots.count * 10
+        @user.stop_bots
+      end
+
       @user.destroy
       flash = { :success => 'User destroyed.' }
     end

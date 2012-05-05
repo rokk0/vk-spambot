@@ -69,7 +69,8 @@
   <div class="control-group">
     <%= f.label :interval, :class => 'control-label' %>
     <div class="controls">
-      <%= f.select :interval, [['none', 0]] + (1..60).to_a.map{|s| [pluralize(s, 'minute'), s]} %>
+      <%= f.select :hours, [['none', 0]] + (1..24).to_a.map{|s| [pluralize(s, 'hour'), s]} %>
+      <%= f.select :minutes, [['none', 0]] + (1..60).to_a.map{|s| [pluralize(s, 'minute'), s]} %>
     </div>
   </div>
 

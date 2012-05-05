@@ -188,6 +188,9 @@ function run_all() {
         if (result.statuses != undefined) {
           for(var bot_id in result.statuses){
             if (result.statuses.hasOwnProperty(bot_id)){
+              if (result.statuses[bot_id].page_title != undefined && result.statuses[bot_id].page_title != '') {
+                $('#link_title_' + bot_id).text(result.statuses[bot_id].page_title);
+              }
               change_bot_status(bot_id, result.statuses[bot_id]);
             }
           }

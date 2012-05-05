@@ -61,17 +61,19 @@ class Bot < ActiveRecord::Base
 
   # We need to update our db entry with data that returned from sinatra
   def update_title_and_hash(response)
-    page_title = JSON.parse(response.body)['page_title']
+    response = JSON.parse(response)
+
+    page_title = response['page_title']
     unless page_title.nil?
-      update_attributes(:page_title => page_title)
+      update_attribute(:page_title, page_title)
     end
 
-    page_hash = JSON.parse(response.body)['page_hash']
+    page_hash = response['page_hash']
     unless page_hash.nil?
-      update_attributes(:page_hash => page_hash)
+      update_attribute(:page_hash, page_hash)
     end
 
-    JSON.parse(response)
+    response
   end
 
   private
@@ -85,7 +87,7 @@ class Bot < ActiveRecord::Base
     end
 
     def set_interval
-      self.interval = hours.to_i.zero? && minutes.to_i.zero? ? 0 : "#{hours}h#{minutes}m"
+      self.interval = hours.to_i.zero? && minutes.to_i.zero? ? 0 : "#{hours}h#{minutes}m" unless hours.nil? || minutes.nil?
     end
 
 end

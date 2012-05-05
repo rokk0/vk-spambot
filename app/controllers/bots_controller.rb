@@ -64,8 +64,6 @@ class BotsController < ApplicationController
     if user.admin? && !current_user?(user) && current_user.admin?
       flash_access_denied
     else
-      @bot.stop
-
       # To stop bot after 10 seconds if bot destroyed in short period of time after 'run' request
       Thread.new do
         sleep 10

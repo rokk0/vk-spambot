@@ -18,7 +18,7 @@
     <thead>
       <tr>
         <th>#</th>
-        <th><%= model_class.human_attribute_name(:email) %></th>
+        <th><%= model_class.human_attribute_name(:phone) %></th>
         <th><%= model_class.human_attribute_name(:created_at) %></th>
         <th><%=t '.actions', :default => t("helpers.actions") %></th>
       </tr>
@@ -27,7 +27,7 @@
       <% @accounts.each do |account| %>
         <tr>
           <td><%= account.id %></td>
-          <td><%= account.email %></td>
+          <td><%= account.phone %></td>
           <td><%= account.created_at.strftime("%d/%m/%Y") %></td>
           <td class='left'>
             <% if current_user?(@user) || current_user.admin? && !@user.admin? %>

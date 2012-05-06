@@ -13,11 +13,7 @@
 </p>
 <p>
   <strong><%= model_class.human_attribute_name(:page) %>:</strong>
-  <%= @bot.page %>
-</p>
-<p>
-  <strong><%= model_class.human_attribute_name(:page_title) %>:</strong>
-  <%= @bot.page_title %>
+  <%= link_to @bot.page_title.nil? || @bot.page_title.empty? ? 'N/A' : @bot.page_title, @bot.page %>
 </p>
 <% if current_user.admin? %>
 	<p>

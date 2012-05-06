@@ -36,7 +36,7 @@
       <% @bots.each do |bot| %>
         <tr>
           <td><%= bot.id %></td>
-          <td><%= bot.account.email %></td>
+          <td><%= bot.account.phone %></td>
           <td><span class="label"><%= bot.bot_type %></span></td>
           <td><%= link_to bot.page_title.nil? || bot.page_title.empty? ? 'N/A' : bot.page_title, bot.page, :id => "link_title_#{bot.id}" %></td>
           <td><span class="badge badge-info"><%= bot.count %></span></td>

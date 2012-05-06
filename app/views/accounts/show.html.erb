@@ -6,11 +6,7 @@
 </p>
 <p>
   <strong><%= model_class.human_attribute_name(:bot_type) %>:</strong>
-  <%= @account.email %>
-</p>
-<p>
-  <strong><%= model_class.human_attribute_name(:page) %>:</strong>
-  <%= @account.code %>
+  <%= @account.phone %>
 </p>
 
 <%= link_to raw("<i class='icon-arrow-left'></i> #{t('.back', :default => t("helpers.links.back"))}"),

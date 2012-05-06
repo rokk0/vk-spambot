@@ -6,7 +6,8 @@ module BotsHelper
     def user_access
       @bot = current_user.admin? ? Bot.find(params[:id]) : current_user.bots.find(params[:id])
 
-      check_user_access(@bot.user_id)
+      check_user_access(@bot.account.user_id)
+
     rescue
       flash_access_denied
     end
@@ -21,7 +22,7 @@ module BotsHelper
       bot = Bot.find(params[:id])
 
       if current_user.admin?
-        @bot = User.find(bot.user_id).admin? ? current_user.bots.find(params[:id]) : bot
+        @bot = User.find(bot.account.user_id).admin? ? current_user.bots.find(params[:id]) : bot
       else
         @bot = current_user.bots.find(params[:id])
       end
@@ -35,6 +36,19 @@ module BotsHelper
       @user = User.find(params[:user_id])
 
       unless !@user.admin? && current_user.admin? || current_user?(@user)
+        response_access_denied
+      end
+
+    rescue
+      response_access_denied
+    end
+
+    # check user access to run/stop all bots by account_id
+    def user_access_control_account_all
+      @account  = Account.find(params[:account_id])
+      user      = @account.user
+
+      unless !user.admin? && current_user.admin? || current_user?(user)
         response_access_denied
       end
 

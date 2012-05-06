@@ -169,6 +169,59 @@ function stop(id) {
   });
 }
 
+function run_account_all() {
+  status_clear_all();
+  lock_action_all_btn(true);
+
+  $.ajax({
+      type: 'POST',
+      url: '/run_account_all',
+      async: true,
+      cache: false,
+
+      data: { account_id : account_id },
+      dataType: 'json',
+
+      success: function(result){
+        status_clear_all();
+
+        if (result.statuses != undefined) {
+          for(var bot_id in result.statuses){
+            if (result.statuses.hasOwnProperty(bot_id)){
+              if (result.statuses[bot_id].page_title != undefined && result.statuses[bot_id].page_title != '') {
+                $('#link_title_' + bot_id).text(result.statuses[bot_id].page_title);
+              }
+              change_bot_status(bot_id, result.statuses[bot_id]);
+            }
+          }
+        }
+
+        unlock_action_all_btn('account');
+      }
+  });
+}
+
+function stop_account_all() {
+  lock_action_all_btn(true);
+
+  $.ajax({
+      type: 'POST',
+      url: '/stop_account_all',
+      async: true,
+      cache: false,
+
+      data: { account_id : account_id },
+      dataType: 'json',
+
+      success: function(result){
+        status_clear_all();
+
+        unlock_action_all_btn('account');
+        all_bot_btn.removeClass('disabled');
+      }
+  });
+}
+
 function run_all() {
   status_clear_all();
   lock_action_all_btn(true);
@@ -196,7 +249,7 @@ function run_all() {
           }
         }
 
-        unlock_action_all_btn();
+        unlock_action_all_btn('user');
       }
   });
 }
@@ -216,7 +269,7 @@ function stop_all() {
       success: function(result){
         status_clear_all();
 
-        unlock_action_all_btn();
+        unlock_action_all_btn('user');
         all_bot_btn.removeClass('disabled');
       }
   });
@@ -235,10 +288,15 @@ function lock_action_all_btn(lock_all_bot_btn) {
   stop_all_btn.attr('onclick', 'return false;');
 }
 
-function unlock_action_all_btn() {
+function unlock_action_all_btn(command_type) {
   run_all_btn.removeClass('disabled');
-  run_all_btn.attr('onclick', 'run_all(); return false;');
-
   stop_all_btn.removeClass('disabled');
-  stop_all_btn.attr('onclick', 'stop_all(); return false;');
+
+  if (command_type == 'account') {
+    run_all_btn.attr('onclick', 'run_account_all(); return false;');
+    stop_all_btn.attr('onclick', 'stop_account_all(); return false;');
+  } else {
+    run_all_btn.attr('onclick', 'run_all(); return false;');
+    stop_all_btn.attr('onclick', 'stop_all(); return false;');
+  }
 }

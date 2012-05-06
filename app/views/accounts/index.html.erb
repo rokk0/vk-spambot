@@ -1,0 +1,62 @@
+<%- model_class = Account.new.class -%>
+<% @user = params[:user_id] ? User.find(params[:user_id]) : current_user %>
+
+<script>
+  $(document).ready(function(){
+    user_id = <%= @user.id %>;
+    get_status();
+    setInterval('get_status()', get_status_interval);
+  });
+</script>
+
+<h1><%= raw("#{t('.title', :default => model_class.model_name.human.pluralize)} (#{link_to @user.name, @user})")%> </h1>
+
+<% unless @accounts.empty? %>
+  <%= will_paginate @accounts %>
+
+  <table class="table table-striped table-bordered centered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th><%= model_class.human_attribute_name(:email) %></th>
+        <th><%= model_class.human_attribute_name(:created_at) %></th>
+        <th><%=t '.actions', :default => t("helpers.actions") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @accounts.each do |account| %>
+        <tr>
+          <td><%= account.id %></td>
+          <td><%= account.email %></td>
+          <td><%= account.created_at.strftime("%d/%m/%Y") %></td>
+          <td class='left'>
+            <% if current_user?(@user) || current_user.admin? && !@user.admin? %>
+              <%= link_to raw("<i class='icon-fire'></i> Bots (#{account.bots.count})"),
+                      user_account_bots_path(account.user_id, account.id),
+                      :class => 'btn btn-mini btn-info' %>
+              <%= link_to raw("<i class='icon-eye-open'></i> #{t('.view', :default => t("helpers.links.view"))}"),
+                          account_path(account), :class => 'btn btn-mini' %>
+              <%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
+                          edit_account_path(account), :class => 'btn btn-mini' %>
+              <%= link_to raw("<i class='icon-trash'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
+                          account_path(account),
+                          :method => :delete,
+                          :confirm => t("helpers.links.confirm", :default => 'Are you sure?'),
+                          :class => 'btn btn-mini btn-danger' %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= will_paginate @accounts %>
+<% end %>
+
+<% if @user && !@user.admin? && current_user.admin? || current_user?(@user) %>
+  <%= link_to raw("<i class='icon-arrow-left'></i> #{t('.back', :default => t("helpers.links.back"))}"),
+            user_path(@user), :class => 'btn' %>
+  <%= link_to t('.new', :default => t("helpers.links.new")),
+            new_user_account_path(@user),
+            :class => 'btn btn-primary' %>
+<% end %>

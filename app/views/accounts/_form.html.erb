@@ -1,0 +1,39 @@
+<%= form_for @account, :url => @account.id ? update_account_path(@account) : create_account_path, :html => { :class => 'form-horizontal' } do |f| %>
+  <% if @account.errors.any? %>
+    <div class='alert alert-error'>
+      <h2><%= pluralize(@account.errors.count, 'error') %>:</h2>
+      <p>There were problems with the following fields:</p>
+      <ul>
+      <% @account.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="control-group">
+    <%= f.label :email, :class => 'control-label required' %>
+    <div class="controls">
+      <%= f.text_field :email, :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :password, :class => "control-label #{@account.id ? '' : 'required'}" %>
+    <div class="controls">
+      <%= f.password_field :password, :autocomplete => 'off', :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :code, :class => 'control-label required' %>
+    <div class="controls">
+      <%= f.text_field :code, :class => 'text_field span1', :maxlength => 4 %> - last four phone number digits
+    </div>
+  </div>
+
+  <div class="control-group">
+    <div class="controls">
+      <%= f.submit nil, :class => 'btn btn-primary' %>
+      <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                  user_accounts_path(@account.user_id), :class => 'btn' %>
+    </div>
+  </div>
+<% end %>

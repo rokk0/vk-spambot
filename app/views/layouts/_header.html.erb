@@ -26,6 +26,7 @@
           <ul class="dropdown-menu">
             <li><%= link_to raw("<i class='icon-eye-open'></i> View"), current_user %></li>
             <li><%= link_to raw("<i class='icon-pencil'></i> Edit"), edit_user_path(current_user) %></li>
+            <li><%= link_to raw("<i class='icon-leaf'></i> VK accounts (#{current_user.accounts.count})"), user_accounts_path(current_user) %></li>
             <li><%= link_to raw("<i class='icon-fire'></i> Bots (#{current_user.bots.count})"), user_bots_path(current_user) %></li>
             <li class="divider"></li>
             <li><%= link_to raw("<i class='icon-off'></i> Sign out"), signout_path, :method => :delete %></li>

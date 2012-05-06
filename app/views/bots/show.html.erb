@@ -1,16 +1,11 @@
 <%- model_class = @bot.class -%>
-<% @user = User.find(@bot.user_id) %>
+
+<% @user        = User.find(@bot.account.user_id) %>
+<% @account_id  = params[:account_id] %>
+
 <p>
   <strong><%= model_class.human_attribute_name(:user_id) %>:</strong>
   <%= link_to @user.name, user_bots_path(@user) %>
-</p>
-<p>
-  <strong><%= model_class.human_attribute_name(:email) %>:</strong>
-  <%= @bot.email %>
-</p>
-<p>
-  <strong><%= model_class.human_attribute_name(:code) %>:</strong>
-  <%= @bot.code %>
 </p>
 <p>
   <strong><%= model_class.human_attribute_name(:bot_type) %>:</strong>
@@ -44,11 +39,11 @@
 </p>
 
 <%= link_to raw("<i class='icon-arrow-left'></i> #{t('.back', :default => t("helpers.links.back"))}"),
-            user_bots_path(@bot.user_id), :class => 'btn' %>
+            @account_id.nil? ? user_bots_path(@user.id) : user_account_bots_path(@user.id, @account_id), :class => 'btn' %>
 <%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
-            edit_bot_path(@bot), :class => 'btn' %>
+            @account_id.nil? ? edit_bot_path(@bot) : edit_user_account_bot_path(@user.id, @account_id, @bot.id), :class => 'btn' %>
 <%= link_to raw("<i class='icon-trash'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
-            bot_path(@bot),
+            @account_id.nil? ? bot_path(@bot) : user_account_bot_path(@user.id, @account_id, @bot.id),
             :method => 'delete',
             :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')),
             :class => 'btn btn-danger' %>

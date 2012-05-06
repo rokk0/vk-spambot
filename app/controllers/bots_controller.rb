@@ -4,18 +4,22 @@ require 'encryptor'
 class BotsController < ApplicationController
   include BotsHelper
 
-  before_filter :user_access,               :only => [:edit, :update, :show, :destroy]
-  before_filter :user_access_create,        :only => [:new, :create]
-  before_filter :user_access_control,       :only => [:run, :stop]
-  before_filter :user_access_control_all,   :only => [:run_all, :stop_all]
+  before_filter :user_access,                     :only => [:edit, :update, :show, :destroy]
+  before_filter :user_access_create,              :only => [:new, :create]
+  before_filter :user_access_control,             :only => [:run, :stop]
+  before_filter :user_access_control_all,         :only => [:run_all, :stop_all]
+  before_filter :user_access_control_account_all, :only => [:run_account_all, :stop_account_all]
 
   def index
     if current_user.id != params[:user_id].to_i && !current_user.admin?
       flash_access_denied
+    elsif params[:account_id] != nil
+      @bots  = Account.find(params[:account_id]).bots.paginate(:page => params[:page])
     else
       @bots  = User.find(params[:user_id]).bots.paginate(:page => params[:page])
-      @title = 'Listing bots'
     end
+
+    @title = 'Listing bots'
   rescue
     flash_access_denied
   end
@@ -29,8 +33,6 @@ class BotsController < ApplicationController
   end
 
   def edit
-    @bot.password = nil
-
     interval      = @bot.interval.scan(/(\d+)h(\d+)m/).flatten
     @bot.hours    = interval.first
     @bot.minutes  = interval.second
@@ -39,11 +41,18 @@ class BotsController < ApplicationController
   end
 
   def create
-    params[:bot][:user_id] = current_user.admin? ? params[:user_id] || current_user.id : current_user.id
+    user_id     = current_user.admin? ? params[:user_id] || current_user.id : current_user.id
+    account_id  = params[:account_id]
+
     @bot = Bot.new(params[:bot])
 
     if @bot.save
-      redirect_to user_bots_path(@bot.user_id), :flash => { :success => 'Bot was successfully created.' }
+      if account_id.nil?
+        redirect_to user_bots_path(user_id), :flash => { :success => 'Bot was successfully created.' }
+      else
+        redirect_to user_account_bots_path(user_id, account_id), 
+              :flash => { :success => 'Bot was successfully created.' }
+      end
     else
       @title = 'New bot'
       render 'new'
@@ -51,8 +60,16 @@ class BotsController < ApplicationController
   end
 
   def update
+    user_id     = params[:user_id]
+    account_id  = params[:account_id]
+
     if @bot.update_attributes(params[:bot])
-      redirect_to user_bots_path(@bot.user_id), :flash => { :success => 'Bot was successfully updated.' }
+      if account_id.nil?
+        redirect_to user_bots_path(user_id), :flash => { :success => 'Bot was successfully updated.' }
+      else
+        redirect_to user_account_bots_path(user_id, account_id), 
+              :flash => { :success => 'Bot was successfully updated.' }
+      end
     else
       @title = 'Edit bot'
       render 'edit'
@@ -60,7 +77,9 @@ class BotsController < ApplicationController
   end
 
   def destroy
-    user = User.find(@bot.user_id)
+    user        = User.find(params[:user_id])
+    account_id  = params[:account_id]
+
     if user.admin? && !current_user?(user) && current_user.admin?
       flash_access_denied
     else
@@ -71,7 +90,12 @@ class BotsController < ApplicationController
       end
 
       @bot.destroy
-      redirect_to user_bots_path(user.id), :flash => { :success => 'Bot destroyed.' }
+      if account_id.nil?
+        redirect_to user_bots_path(user.id), :flash => { :success => 'Bot was successfully destroyed.' }
+      else
+        redirect_to user_account_bots_path(user.id, account_id), 
+              :flash => { :success => 'Bot was successfully destroyed.' }
+      end
     end
   end
 
@@ -81,6 +105,14 @@ class BotsController < ApplicationController
 
   def stop
     respond_to { |format| format.json { render :json => @bot.stop } }
+  end
+
+  def run_account_all
+    respond_to { |format| format.json { render :json => { :statuses => @account.run_bots } } }
+  end
+
+  def stop_account_all
+    respond_to { |format| format.json { render :json => @account.stop_bots } }
   end
 
   def run_all

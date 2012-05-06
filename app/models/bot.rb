@@ -1,23 +1,18 @@
 class Bot < ActiveRecord::Base
-  attr_accessible :user_id, :email, :password, :bot_type, :page, :page_title, :page_hash, :message, :count, :hours, :minutes, :code
+  attr_accessible :account_id, :bot_type, :page, :page_title, :page_hash, :message, :count, :hours, :minutes
   attr_accessor :hours, :minutes
 
-  belongs_to :user
+  belongs_to :account
 
   self.per_page = 10
 
-  validates :password,  :presence     => true,
-                        :confirmation => false,
-                        :length       => { :within => 6..40 },
-                        :if           => :validate_password?
-
-  validates :email,     :presence     => true
-  validates :bot_type,  :presence     => true
-  validates :page,      :presence     => true
-  validates :message,   :presence     => true
-  validates :count,     :presence     => true
-  validates :hours,     :presence     => true
-  validates :minutes,   :presence     => true
+  validates :account_id,  :presence     => true
+  validates :bot_type,    :presence     => true
+  validates :page,        :presence     => true
+  validates :message,     :presence     => true
+  validates :count,       :presence     => true
+  validates :hours,       :presence     => true
+  validates :minutes,     :presence     => true
 
   validates :bot_type, :inclusion     => { :in => %w{ group discussion }, :message => 'can only be group/duiscussion.' }
 
@@ -30,22 +25,23 @@ class Bot < ActiveRecord::Base
   validates :minutes, :numericality   => { :only_integer => true, :message => 'can only be whole number.' }
   validates :minutes, :numericality   => { :greater_than_or_equal_to => 0, :less_than_or_equal_to => 60, :message => 'can only be between 0 and 60.' }
 
-  validates :code, :numericality      => { :only_integer => true, :message => 'can only be whole number.' }
-  validates :code, :length            => { :is => 4, :message => 'length must be 4 digits.' }
-
   default_scope :order => 'bots.created_at DESC'
 
-  before_save :check_password, :set_interval
+  before_save :set_interval
 
   # Go, go, go!
   def run
-    data = {}
-    bot_data = attributes.except("created_at", "updated_at")
+    data          = {}
+    bot_data      = attributes.except('created_at', 'updated_at')
+    account_data  = account.attributes.except('id', 'created_at', 'updated_at')
+
     bot_data.each_pair { |k,v| data.store(k.to_sym,v.to_s) }
+    account_data.each_pair { |k,v| data.store(k.to_sym,v.to_s) }
 
     data = { :bot => Encryptor.encrypt(data.to_json, :key => $secret_key) }
 
     response = RestClient.post "#{$service_url}/api/bot/run", data, { :content_type => :json, :accept => :json }
+
     update_title_and_hash(response)
   rescue => error
     { :status => :error, :message => error.to_s }
@@ -77,14 +73,6 @@ class Bot < ActiveRecord::Base
   end
 
   private
-
-    def validate_password?
-      new_record? || !password.blank?
-    end
-
-    def check_password
-      self.password = Bot.find(id).password if password.blank?
-    end
 
     def set_interval
       self.interval = hours.to_i.zero? && minutes.to_i.zero? ? 0 : "#{hours}h#{minutes}m" unless hours.nil? || minutes.nil?

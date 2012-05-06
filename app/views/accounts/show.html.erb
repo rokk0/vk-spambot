@@ -1,0 +1,24 @@
+<%- model_class = @account.class -%>
+<% @user = User.find(@account.user_id) %>
+<p>
+  <strong><%= model_class.human_attribute_name(:user_id) %>:</strong>
+  <%= link_to @user.name, user_accounts_path(@user) %>
+</p>
+<p>
+  <strong><%= model_class.human_attribute_name(:bot_type) %>:</strong>
+  <%= @account.email %>
+</p>
+<p>
+  <strong><%= model_class.human_attribute_name(:page) %>:</strong>
+  <%= @account.code %>
+</p>
+
+<%= link_to raw("<i class='icon-arrow-left'></i> #{t('.back', :default => t("helpers.links.back"))}"),
+            user_accounts_path(@account.user_id), :class => 'btn' %>
+<%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
+            edit_account_path(@account), :class => 'btn' %>
+<%= link_to raw("<i class='icon-trash'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
+            account_path(@account),
+            :method => 'delete',
+            :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')),
+            :class => 'btn btn-danger' %>

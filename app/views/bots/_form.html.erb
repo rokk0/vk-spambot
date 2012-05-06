@@ -1,4 +1,10 @@
-<%= form_for @bot, :url => @bot.id ? update_bot_path(@bot) : create_bot_path, :html => { :class => 'form-horizontal' } do |f| %>
+<% @user        = params[:user_id] ? User.find(params[:user_id]) : current_user %>
+<% @account_id  = params[:account_id] %>
+
+<% @form_bot_path = @account_id.nil? ? create_bot_path(@user.id)  : create_user_account_bot_path(@user.id, @account_id) %>
+<% @form_bot_path = @account_id.nil? ? update_bot_path(@user.id, @bot.id)      : update_user_account_bot_path(@user.id, @account_id, @bot.id) if @bot.id %>
+
+<%= form_for @bot, :url => @form_bot_path, :html => { :class => 'form-horizontal' } do |f| %>
   <% if @bot.errors.any? %>
     <div class='alert alert-error'>
       <h2><%= pluralize(@bot.errors.count, 'error') %>:</h2>
@@ -11,21 +17,9 @@
     </div>
   <% end %>
   <div class="control-group">
-    <%= f.label :email, :class => 'control-label required' %>
+    <%= f.label :account, :class => 'control-label required' %>
     <div class="controls">
-      <%= f.text_field :email, :class => 'text_field' %>
-    </div>
-  </div>
-  <div class="control-group">
-    <%= f.label :password, :class => "control-label #{@bot.id ? '' : 'required'}" %>
-    <div class="controls">
-      <%= f.password_field :password, :autocomplete => 'off', :class => 'text_field' %>
-    </div>
-  </div>
-  <div class="control-group">
-    <%= f.label :code, :class => 'control-label required' %>
-    <div class="controls">
-      <%= f.text_field :code, :class => 'text_field span1', :maxlength => 4 %> - last four phone number digits
+      <%= f.select :account_id, [['--select--', nil]] + @user.accounts.to_a.map { |account| [account.email, account.id] }, :selected => @account_id %>
     </div>
   </div>
   <div class="control-group">
@@ -63,14 +57,14 @@
   <div class="control-group">
     <%= f.label :count, :class => 'control-label' %>
     <div class="controls">
-      <%= f.select :count, (1..8).to_a.map{|s| [pluralize(s, 'time'), s]} %>
+      <%= f.select :count, (1..8).to_a.map { |s| [pluralize(s, 'time'), s] } %>
     </div>
   </div>
   <div class="control-group">
     <%= f.label :interval, :class => 'control-label' %>
     <div class="controls">
-      <%= f.select :hours, [['none', 0]] + (1..24).to_a.map{|s| [pluralize(s, 'hour'), s]} %>
-      <%= f.select :minutes, [['none', 0]] + (1..60).to_a.map{|s| [pluralize(s, 'minute'), s]} %>
+      <%= f.select :hours, [['none', 0]] + (1..24).to_a.map { |s| [pluralize(s, 'hour'), s] } %>
+      <%= f.select :minutes, [['none', 0]] + (1..60).to_a.map { |s| [pluralize(s, 'minute'), s] } %>
     </div>
   </div>
 
@@ -78,7 +72,7 @@
     <div class="controls">
       <%= f.submit nil, :class => 'btn btn-primary' %>
       <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
-                  user_bots_path(@bot.user_id), :class => 'btn' %>
+                  @account_id.nil? ? user_bots_path(@user.id) : user_account_bots_path(@user.id, @account_id), :class => 'btn' %>
     </div>
   </div>
 <% end %>

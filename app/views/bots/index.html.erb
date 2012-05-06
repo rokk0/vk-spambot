@@ -1,10 +1,14 @@
 <%- model_class = Bot.new.class -%>
-<% @user = params[:user_id] ? User.find(params[:user_id]) : current_user %>
+<% @user        = params[:user_id] ? User.find(params[:user_id]) : current_user %>
+<% @account_id  = params[:account_id] %>
 
 <script>
   $(document).ready(function(){
-    user_id = <%= @user.id %>;
+    user_id     = '<%= @user.id %>';
+    account_id  = '<%= @account_id %>';
+
     get_status();
+
     setInterval('get_status()', get_status_interval);
   });
 </script>
@@ -18,7 +22,7 @@
     <thead>
       <tr>
         <th>#</th>
-        <th><%= model_class.human_attribute_name(:email) %></th>
+        <th><%= model_class.human_attribute_name(:account) %></th>
         <th><%= model_class.human_attribute_name(:bot_type) %></th>
         <th><%= model_class.human_attribute_name(:page) %></th>
         <th><%= model_class.human_attribute_name(:count) %></th>
@@ -32,7 +36,7 @@
       <% @bots.each do |bot| %>
         <tr>
           <td><%= bot.id %></td>
-          <td><%= bot.email %></td>
+          <td><%= bot.account.email %></td>
           <td><span class="label"><%= bot.bot_type %></span></td>
           <td><%= link_to bot.page_title.nil? || bot.page_title.empty? ? 'N/A' : bot.page_title, bot.page, :id => "link_title_#{bot.id}" %></td>
           <td><span class="badge badge-info"><%= bot.count %></span></td>
@@ -48,11 +52,11 @@
                           :id => 'bot_' + bot.id.to_s + '_btn',
                           :name => 'bot_btn' %>
               <%= link_to raw("<i class='icon-eye-open'></i> #{t('.view', :default => t("helpers.links.view"))}"),
-                          bot_path(bot), :class => 'btn btn-mini' %>
+                          @account_id.nil? ? user_bot_path(@user.id, bot) : user_account_bot_path(@user.id, @account_id, bot.id), :class => 'btn btn-mini' %>
               <%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
-                          edit_bot_path(bot), :class => 'btn btn-mini' %>
+                          @account_id.nil? ? edit_user_bot_path(@user.id, bot) : edit_user_account_bot_path(@user.id, @account_id, bot.id), :class => 'btn btn-mini' %>
               <%= link_to raw("<i class='icon-trash'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
-                          bot_path(bot),
+                          @account_id.nil? ? user_bot_path(@user.id, bot) : user_account_bot_path(@user.id, @account_id, bot.id),
                           :method => :delete,
                           :confirm => t("helpers.links.confirm", :default => 'Are you sure?'),
                           :class => 'btn btn-mini btn-danger' %>
@@ -67,20 +71,22 @@
 <% end %>
 
 <% if @user && !@user.admin? && current_user.admin? || current_user?(@user) %>
+  <%= link_to raw("<i class='icon-arrow-left'></i> #{t('.back', :default => t("helpers.links.back"))}"),
+            user_accounts_path(@user), :class => 'btn' %>
   <% unless @bots.empty? %>
     <%= link_to 'Run All',
                 '#',
-                :onclick => 'run_all(); return false;',
+                :onclick => (@account_id.nil? ? 'run_all' : 'run_account_all') + '(); return false;',
                 :class => 'btn btn-success',
                 :id => 'run_all_btn' %>
     <%= link_to 'Stop All',
                 '#',
-                :onclick => 'stop_all(); return false;',
+                :onclick => (@account_id.nil? ? 'stop_all' : 'stop_account_all') + '(); return false;',
                 :class => 'btn btn-danger',
                 :id => 'stop_all_btn' %>
   <% end %>
 
   <%= link_to t('.new', :default => t("helpers.links.new")),
-            new_user_bot_path(@user),
+            @account_id.nil? ? new_user_bot_path(@user) : new_user_account_bot_path(@user.id, @account_id),
             :class => 'btn btn-primary' %>
 <% end %>

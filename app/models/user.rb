@@ -17,9 +17,12 @@ class User < ActiveRecord::Base
   attr_accessor :password
   attr_accessible :name, :email, :password, :password_confirmation
 
-  has_many :bots, :dependent => :destroy
+  has_many :accounts, :dependent => :destroy
+  has_many :bots, :through => :accounts, :dependent => :destroy
 
   self.per_page = 10
+
+  auto_strip_attributes :email
 
   email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
@@ -41,8 +44,10 @@ class User < ActiveRecord::Base
   def run_bots
     statuses = {}
 
-    bots.each do |bot|
-      statuses[bot.id] = bot.run
+    accounts.each do |account|
+      account.bots.each do |bot|
+        statuses[bot.id] = bot.run
+      end
     end
 
     statuses

@@ -1,6 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'rails', '3.2.3'
+gem 'auto_strip_attributes', '~> 1.0'
 
 gem 'twitter-bootstrap-rails'
 

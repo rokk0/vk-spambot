@@ -72,6 +72,12 @@ class Bot < ActiveRecord::Base
     response
   end
 
+  def self.check_status(user_id)
+    RestClient.get "#{$service_url}/api/user/#{user_id}/bots"
+  rescue
+    {}
+  end
+
   private
 
     def set_interval

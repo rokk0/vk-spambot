@@ -28,9 +28,11 @@ class User < ActiveRecord::Base
 
   validates :name,  :presence   => true,
                     :length     => { :maximum => 50 }
+
   validates :email, :presence   => true,
                     :format     => { :with => email_regex },
                     :uniqueness => { :case_sensitive => false }
+
   validates :password, :presence     => true,
                        :confirmation => true,
                        :length       => { :within => 6..40 },
@@ -42,12 +44,17 @@ class User < ActiveRecord::Base
 
   # Trying to run all user bots in our sinatra part
   def run_bots
-    statuses = {}
+    statuses      = {}
+    working_bots  = JSON.parse(Bot.check_status(id))
 
     accounts.each do |account|
+      session                    = account.check_session['session']
+      statuses[account.id]       = {}
+      statuses[account.id][:all] = { :status => :error, :message => 'invalid login/password' } unless session
+
       account.bots.each do |bot|
-        statuses[bot.id] = bot.run
-      end
+        statuses[account.id][bot.id] = working_bots[bot.id.to_s].nil? ? bot.run : { :status => :info, :message => 'already running' }
+      end if session
     end
 
     statuses

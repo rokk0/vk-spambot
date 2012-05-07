@@ -124,13 +124,7 @@ class BotsController < ApplicationController
   end
 
   def check_status
-    begin
-      response = RestClient.get "#{$service_url}/api/user/#{params[:user_id]}/bots"
-    rescue
-      response = {}
-    end
-
-    respond_to { |format| format.json { render :json => response } }
+    respond_to { |format| format.json { render :json => Bot.check_status(params[:user_id]) } }
   end
 
 end

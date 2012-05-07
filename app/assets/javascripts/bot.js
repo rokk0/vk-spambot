@@ -24,7 +24,7 @@ function get_status() {
         for(var bot_id in result){
           if (result.hasOwnProperty(bot_id)){
             if (result[bot_id]['status'] == 'error') {
-              setTimeout('status_clear(' + bot_id + ')', remove_status_interval);
+              //setTimeout('status_clear(' + bot_id + ')', remove_status_interval);
               status_set_error(bot_id, result[bot_id]['message']);
             } else if (result[bot_id]['status'] == 'warning') {
               status_set_warning(bot_id, result[bot_id]['message']);
@@ -38,7 +38,7 @@ function get_status() {
 }
 
 function status_clear_all() {
-  var regexp      = /bot_(\d+)_btn/;
+  var regexp = /bot_(\d+)_btn/;
 
   all_bot_status.text('N/A');
   all_bot_status.removeClass('label-success label-important label-warning label-info label-inverse');
@@ -101,13 +101,41 @@ function change_bot_status(id, data) {
     status_set_warning(id, data.message);
     bot_btn.removeClass('disabled');
   } else if (data.status == 'sent') {
-    setTimeout('status_clear(' + id + ')', remove_status_interval);
+    //setTimeout('status_clear(' + id + ')', remove_status_interval);
     status_set_inverse(id, 'sent: ' + data.message);
     bot_btn.removeClass('disabled');
   } else {
-    setTimeout('status_clear(' + id + ')', remove_status_interval);
+    //setTimeout('status_clear(' + id + ')', remove_status_interval);
     status_set_error(id, data.message)
     bot_btn.removeClass('disabled');
+  }
+}
+
+function change_all_bots_status(message, default_message, label_class) {
+  status_clear_all();
+
+  all_bot_status.text(message == null ? default_message : message);
+  all_bot_status.removeClass('label-success label-important label-warning label-info label-inverse').addClass(label_class);
+}
+
+function show_run_result_data(result) {
+  if (result.statuses != undefined) {
+    for(var account_id in result.statuses){
+      if (result.statuses.hasOwnProperty(account_id)){
+        if (result.statuses[account_id]['all'] != undefined) {
+          change_all_bots_status(result.statuses[account_id]['all']['message'], result.statuses[account_id]['all']['status'], 'label-important');
+        } else {
+          for(var bot_id in result.statuses[account_id]){
+            if (result.statuses[account_id].hasOwnProperty(bot_id)){
+              if (result.statuses[account_id][bot_id].page_title != undefined && result.statuses[account_id][bot_id].page_title != '') {
+                $('#link_title_' + bot_id).text(result.statuses[account_id][bot_id].page_title);
+              }
+              change_bot_status(bot_id, result.statuses[account_id][bot_id]);
+            }
+          }
+        }
+      }
+    }
   }
 }
 
@@ -170,7 +198,7 @@ function stop(id) {
 }
 
 function run_account_all() {
-  status_clear_all();
+  //status_clear_all();
   lock_action_all_btn(true);
 
   $.ajax({
@@ -182,21 +210,12 @@ function run_account_all() {
       data: { account_id : account_id },
       dataType: 'json',
 
-      success: function(result){
-        status_clear_all();
 
-        if (result.statuses != undefined) {
-          for(var bot_id in result.statuses){
-            if (result.statuses.hasOwnProperty(bot_id)){
-              if (result.statuses[bot_id].page_title != undefined && result.statuses[bot_id].page_title != '') {
-                $('#link_title_' + bot_id).text(result.statuses[bot_id].page_title);
-              }
-              change_bot_status(bot_id, result.statuses[bot_id]);
-            }
-          }
-        }
+      success: function(result){
+        show_run_result_data(result);
 
         unlock_action_all_btn('account');
+        all_bot_btn.removeClass('disabled');
       }
   });
 }
@@ -223,7 +242,7 @@ function stop_account_all() {
 }
 
 function run_all() {
-  status_clear_all();
+  //status_clear_all();
   lock_action_all_btn(true);
 
   $.ajax({
@@ -236,20 +255,10 @@ function run_all() {
       dataType: 'json',
 
       success: function(result){
-        status_clear_all();
-
-        if (result.statuses != undefined) {
-          for(var bot_id in result.statuses){
-            if (result.statuses.hasOwnProperty(bot_id)){
-              if (result.statuses[bot_id].page_title != undefined && result.statuses[bot_id].page_title != '') {
-                $('#link_title_' + bot_id).text(result.statuses[bot_id].page_title);
-              }
-              change_bot_status(bot_id, result.statuses[bot_id]);
-            }
-          }
-        }
+        show_run_result_data(result);
 
         unlock_action_all_btn('user');
+        all_bot_btn.removeClass('disabled');
       }
   });
 }

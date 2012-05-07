@@ -25,11 +25,15 @@ class Account < ActiveRecord::Base
 
   # Trying to run all user account bots in our sinatra part
   def run_bots
-    statuses = {}
+    statuses     = { id => {} }
+    working_bots = Bot.check_status(user_id)
+
+    session            = check_session['session']
+    statuses[id][:all] = { :status => :error, :message => 'invalid login/password' } unless session
 
     bots.each do |bot|
-      statuses[bot.id] = bot.run
-    end
+      statuses[id][bot.id] = working_bots[bot.id.to_s].nil? ? bot.run : { :status => :info, :message => 'already running' }
+    end if session
 
     statuses
   rescue => error
@@ -44,6 +48,17 @@ class Account < ActiveRecord::Base
     { :status => :error, :message => error.to_s }
   end
 
+  # Check existance of global variable with VK account session on service
+  def check_session
+    data = { :account => Encryptor.encrypt({:id => id, :phone => phone, :password => password}.to_json, :key => $secret_key) }
+
+    response = RestClient.post "#{$service_url}/api/account/check_session", data, { :content_type => :json, :accept => :json }
+
+    JSON.parse(response)
+  rescue => error
+    { :session => false }
+  end
+  
   private
 
     def validate_password?
@@ -55,7 +70,8 @@ class Account < ActiveRecord::Base
     end
 
     def check_phone
-      errors.add(:phone, 'has already been taken by other account') unless Account.find_by_phone_and_approved(self.phone, true).nil?
+      account = Account.find_by_phone_and_approved(self.phone, true)
+      errors.add(:phone, 'has already been taken') unless account.nil? || (account.user_id == user_id unless id.nil?)
     end
 
     def check_account
@@ -70,6 +86,7 @@ class Account < ActiveRecord::Base
     rescue
       errors.add(:phone, 'not approved')
     end
+
 
     def approve_account(response)
       if (response['status'] == 'ok')

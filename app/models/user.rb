@@ -45,7 +45,7 @@ class User < ActiveRecord::Base
   # Trying to run all user bots in our sinatra part
   def run_bots
     statuses      = {}
-    working_bots  = JSON.parse(Bot.check_status(id))
+    working_bots  = Bot.check_status(id)
 
     accounts.each do |account|
       session                    = account.check_session['session']

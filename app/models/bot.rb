@@ -10,14 +10,10 @@ class Bot < ActiveRecord::Base
   validates :bot_type,    :presence     => true
   validates :page,        :presence     => true
   validates :message,     :presence     => true
-  validates :count,       :presence     => true
   validates :hours,       :presence     => true
   validates :minutes,     :presence     => true
 
   validates :bot_type, :inclusion     => { :in => %w{ group discussion }, :message => 'can only be group/duiscussion.' }
-
-  validates :count, :numericality     => { :only_integer => true, :message => 'can only be whole number.' }
-  validates :count, :inclusion        => { :in => 1..8, :message => 'can only be between 1 and 8.' }
 
   validates :hours, :numericality     => { :only_integer => true, :message => 'can only be whole number.' }
   validates :hours, :numericality     => { :greater_than_or_equal_to => 0, :less_than_or_equal_to => 24, :message => 'can only be between 0 and 24.' }

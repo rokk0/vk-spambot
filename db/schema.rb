@@ -11,29 +11,29 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120506102646) do
+ActiveRecord::Schema.define(:version => 20120506080823) do
 
   create_table "accounts", :force => true do |t|
-    t.integer  "user_id"
     t.string   "phone"
     t.string   "password"
     t.boolean  "approved"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.integer  "user_id"
+    t.integer  "bots_allowed", :default => 5
+    t.datetime "created_at",                  :null => false
+    t.datetime "updated_at",                  :null => false
   end
 
   add_index "accounts", ["phone"], :name => "index_accounts_on_phone", :unique => true
   add_index "accounts", ["user_id"], :name => "index_accounts_on_user_id"
 
   create_table "bots", :force => true do |t|
-    t.integer  "account_id"
     t.string   "bot_type"
     t.string   "page"
     t.string   "page_title"
     t.string   "page_hash"
-    t.text     "message"
-    t.integer  "count"
     t.string   "interval"
+    t.text     "message"
+    t.integer  "account_id"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
@@ -43,11 +43,12 @@ ActiveRecord::Schema.define(:version => 20120506102646) do
   create_table "users", :force => true do |t|
     t.string   "name"
     t.string   "email"
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
     t.string   "encrypted_password"
     t.string   "salt"
     t.boolean  "admin",              :default => false
+    t.integer  "accounts_allowed",   :default => 1
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

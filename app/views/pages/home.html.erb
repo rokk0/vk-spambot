@@ -1,9 +1,7 @@
 <center>
   <h1>VK spambot</h1>
   <br />
-  <% unless signed_in? %>
-    <%= link_to "Sign up now!",
-                signup_path,
-                :class => 'btn btn-success' %>
+  <% unless user_signed_in? %>
+    <%= link_to "Sign up now!", new_user_registration_path, :class => 'btn btn-success' %>
   <% end %>
 </center>

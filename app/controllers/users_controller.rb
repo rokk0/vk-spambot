@@ -25,7 +25,10 @@ class UsersController < ApplicationController
   end
 
   def create
+    require 'pp'
+    pp params
     @user = User.new(params[:user])
+    @user.type = "FreeUser"
     if @user.save
       sign_in @user unless current_user && current_user.admin?
       redirect_to @user, :flash => { :success => 'Welcome to the... dunno!' }

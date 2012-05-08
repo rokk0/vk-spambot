@@ -11,6 +11,7 @@ gem 'bootstrap-will_paginate'
 
 gem 'parseconfig'
 gem 'encryptor'
+gem 'devise'
 
 group :assets do
   gem 'sass-rails', '~> 3.2.3'

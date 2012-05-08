@@ -1,4 +1,6 @@
 VkSpambot::Application.routes.draw do
+  devise_for :users
+
   resources :accounts
 
   get "sessions/new"
@@ -13,11 +15,15 @@ VkSpambot::Application.routes.draw do
 
   resources :bots
   resources :accounts
-  resources :sessions, :only => [:new, :create, :destroy]
+  #resources :sessions, :only => [:new, :create, :destroy]
+
+  devise_scope :user do
+    get "signin", :to => "devise/sessions#new"
+  end
 
   match '/signup',  :to => 'users#new'
-  match '/signin',  :to => 'sessions#new'
-  match '/signout', :to => 'sessions#destroy'
+  match '/signin',  :to => 'devise/sessions#new'
+  match '/signout', :to => 'devise/sessions#destroy'
 
   match '/contact', :to => 'pages#contact'
   match '/about',   :to => 'pages#about'

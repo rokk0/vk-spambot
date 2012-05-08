@@ -1,0 +1,43 @@
+<h2>Sign up</h2>
+
+<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+  <%= devise_error_messages! %>
+
+
+  <div class="control-group">
+    <%= f.label :name, :class => 'control-label required' %>
+    <div class="controls">
+      <%= f.text_field :name, :class => 'text_field' %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <%= f.label :email, :class => 'control-label required' %>
+    <div class="controls">
+      <%= f.text_field :email, :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :password, :class => "control-label #{@user.id ? '' : 'required'}" %>
+    <div class="controls">
+      <%= f.password_field :password, :autocomplete => 'off', :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :password_confirmation, 'Confirmation', :class => "control-label #{@user.id ? '' : 'required'}" %>
+    <div class="controls">
+      <%= f.password_field :password_confirmation, :autocomplete => 'off', :class => 'text_field' %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <div class="controls">
+      <%= f.submit nil, :class => 'btn btn-primary' %>
+      <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                  :back, :class => 'btn' %>
+    </div>
+  </div>
+
+<% end %>
+
+<%= render "links" %>

@@ -42,7 +42,7 @@
           <td><%= bot.created_at.strftime("%d/%m/%Y") %></td>
           <td><span id="status_<%= bot.id %>" name="bot_status" class="label">N/A</span></td>
           <td class='bots_list_control left'>
-            <% if current_user?(@user) || current_user.admin? && !@user.admin? %>
+            <% # if current_user?(@user) || current_user.admin? && !@user.admin? %>
               <%= link_to 'Run',
                           '#',
                           :onclick => 'run(' + bot.id.to_s + '); return false;',
@@ -58,7 +58,7 @@
                           :method => :delete,
                           :confirm => t("helpers.links.confirm", :default => 'Are you sure?'),
                           :class => 'btn btn-mini btn-danger' %>
-            <% end %>
+            <% # end %>
           </td>
         </tr>
       <% end %>
@@ -68,7 +68,7 @@
   <%= will_paginate @bots %>
 <% end %>
 
-<% if @user && !@user.admin? && current_user.admin? || current_user?(@user) %>
+<% # if @user && !@user.admin? && current_user.admin? || current_user?(@user) %>
   <%= link_to raw("<i class='icon-arrow-left'></i> #{t('.back', :default => t("helpers.links.back"))}"),
             user_accounts_path(@user), :class => 'btn' %>
   <% unless @bots.empty? %>
@@ -87,4 +87,4 @@
   <%= link_to t('.new', :default => t("helpers.links.new")),
             @account_id.nil? ? new_user_bot_path(@user) : new_user_account_bot_path(@user.id, @account_id),
             :class => 'btn btn-primary' %>
-<% end %>
+<% # end %>

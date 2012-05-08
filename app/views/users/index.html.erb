@@ -22,16 +22,16 @@
           <%= link_to raw("<i class='icon-eye-open'></i> #{t('.view', :default => t("helpers.links.view"))}"),
                       user_path(user), :class => 'btn btn-mini' %>
 
-          <% if current_user?(user) || current_user.admin? %>
+          <% # if current_user?(user) || current_user.admin? %>
             <%= link_to raw("<i class='icon-leaf'></i> VK accounts (#{user.accounts.count})"),
                         user_accounts_path(user),
                         :class => 'btn btn-mini btn-info' %>
             <%= link_to raw("<i class='icon-fire'></i> Bots (#{user.bots.count})"),
                         user_bots_path(user),
                         :class => 'btn btn-mini btn-info' %>
-          <% end %>
+          <% # end %>
 
-          <% if current_user.admin? && !user.admin? %>
+          <% # if current_user.admin? && !user.admin? %>
           <%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
                       edit_user_path(user), :class => 'btn btn-mini' %>
           <%= link_to raw("<i class='icon-trash'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
@@ -39,7 +39,7 @@
                       :method => :delete,
                       :confirm => t("helpers.links.confirm", :default => 'Are you sure?'),
                       :class => 'btn btn-mini btn-danger' %>
-          <% end %>
+          <% # end %>
         </td>
       </tr>
     <% end %>
@@ -48,8 +48,8 @@
 
 <%= will_paginate @users %>
 
-<% if current_user.admin? %>
+<% # if current_user.admin? %>
   <%= link_to t('.new', :default => t("helpers.links.new")),
             new_user_path,
             :class => 'btn btn-primary' %>
-<% end %>
+<% # end %>

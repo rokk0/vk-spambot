@@ -21,7 +21,7 @@ class DeviseCreateUsers < ActiveRecord::Migration
       t.string   :last_sign_in_ip
 
       ## Encryptable
-      t.string :password_salt
+      #t.string :password_salt
 
       ## Confirmable
       t.string   :confirmation_token
@@ -35,7 +35,9 @@ class DeviseCreateUsers < ActiveRecord::Migration
       t.datetime :locked_at
 
       ## Token authenticatable
-      t.string :authentication_token
+      #t.string :authentication_token
+
+      t.integer :accounts_allowed, :default => 1
 
       t.timestamps
     end
@@ -44,6 +46,6 @@ class DeviseCreateUsers < ActiveRecord::Migration
     add_index :users, :reset_password_token, :unique => true
     add_index :users, :confirmation_token,   :unique => true
     add_index :users, :unlock_token,         :unique => true
-    add_index :users, :authentication_token, :unique => true
+    #add_index :users, :authentication_token, :unique => true
   end
 end

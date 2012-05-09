@@ -9,7 +9,14 @@ class Ability
     else
       can :manage, User,    :id => user.id
       can :manage, Account, :user_id => user.id
-      can :manage, Bot,     :account => { :user_id => user.id }
+       can :create, Bot
+      can :manage, Bot,     :account => { :user => { :id => user.id } }
+      #can :manage, Bot,     :account => { :user_id => user.id }
+
+      #can :manage, Bot do |bot|
+      #  p bot
+      #  bot.account.user.id == user.id
+      #end
 
       can :destroy, Bot,    :account => { :user_id => user.id }
 

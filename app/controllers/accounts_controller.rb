@@ -8,7 +8,7 @@ class AccountsController < ApplicationController
 
   #load_and_authorize_resource
   load_and_authorize_resource :user
-  load_and_authorize_resource :account, :through => :user
+  load_and_authorize_resource :account, :through => :user, :shallow => true
 
   def index
     #authorize! :index, @user, :message => 'Not authorized as an administrator.'

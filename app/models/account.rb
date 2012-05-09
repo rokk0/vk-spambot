@@ -81,7 +81,7 @@ class Account < ActiveRecord::Base
 
       response = RestClient.post "#{$service_url}/api/account/approve", data, { :content_type => :json, :accept => :json }
 
-      #errors.add(:phone, 'not approved') unless (JSON.parse(response)['status'] == 'ok')
+      errors.add(:phone, 'not approved') unless (JSON.parse(response)['status'] == 'ok')
     rescue
       errors.add(:phone, 'not approved')
     end

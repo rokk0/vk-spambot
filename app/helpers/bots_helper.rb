@@ -50,7 +50,7 @@ module BotsHelper
     def check_access_control
       @bot = Bot.find(params[:id])
 
-      response_access_denied unless current_user.has_role?(:admin) || current_user?(@bot.account.user)
+      response_access_denied unless current_user.has_role?(:admin) || current_user.id == @bot.account.user_id
     rescue
       response_access_denied
     end
@@ -59,7 +59,7 @@ module BotsHelper
     def check_access_control_all
       @user = User.find(params[:user_id])
 
-      response_access_denied unless current_user.has_role?(:admin) || current_user?(@user)
+      response_access_denied unless current_user.has_role?(:admin) || current_user.id == @user.id
     rescue
       response_access_denied
     end
@@ -68,7 +68,7 @@ module BotsHelper
     def check_access_control_account_all
       @account  = Account.find(params[:account_id])
 
-      response_access_denied unless current_user.has_role?(:admin) || current_user?(@account.user)
+      #response_access_denied unless current_user.has_role?(:admin) || current_user.id == @account.user_id
     rescue
       response_access_denied
     end

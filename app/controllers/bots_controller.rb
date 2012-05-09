@@ -4,14 +4,31 @@ require 'encryptor'
 class BotsController < ApplicationController
   include BotsHelper
 
-  before_filter :user_access,                     :only => [:edit, :update, :show, :destroy]
-  before_filter :user_access_create,              :only => [:new, :create]
-  before_filter :user_access_control,             :only => [:run, :stop]
-  before_filter :user_access_control_all,         :only => [:run_all, :stop_all]
-  before_filter :user_access_control_account_all, :only => [:run_account_all, :stop_account_all]
+ # before_filter :user_access,                     :only => [:edit, :update, :show, :destroy]
+  #before_filter :user_access_create,              :only => [:new, :create]
+  before_filter :authenticate_user!
+
+  before_filter :check_bot,                         :only => [:show, :edit, :update, :destroy]
+  before_filter :check_account,                     :only => [:index, :show, :new, :create, :edit, :update, :destroy]
+  before_filter :check_user,                        :only => [:index, :show, :new, :create, :edit, :update, :destroy]
+
+
+  before_filter :check_access_control,              :only => [:run, :stop]
+  before_filter :check_access_control_all,          :only => [:run_all, :stop_all]
+  before_filter :check_access_control_account_all, :only => [:run_account_all, :stop_account_all]
+
+  #load_and_authorize_resource
+  #load_and_authorize_resource :account
+  #load_and_authorize_resource :user
+  load_and_authorize_resource :user
+  load_and_authorize_resource :account
+
+  #load_and_authorize_resource :bot, :through => :account
+  load_and_authorize_resource :bot, :through => [:user, :account]
+
 
   def index
-    if current_user.id != params[:user_id].to_i && !current_user.admin?
+    if current_user.id != params[:user_id].to_i && !current_user.has_role?(:admin)
       flash_access_denied
     elsif params[:account_id] != nil
       @bots  = Account.find(params[:account_id]).bots.paginate(:page => params[:page])
@@ -41,7 +58,7 @@ class BotsController < ApplicationController
   end
 
   def create
-    user_id     = current_user.admin? ? params[:user_id] || current_user.id : current_user.id
+    user_id     = params[:user_id]
     account_id  = params[:account_id]
 
     @bot = Bot.new(params[:bot])
@@ -77,25 +94,21 @@ class BotsController < ApplicationController
   end
 
   def destroy
-    user        = User.find(params[:user_id])
+    user_id     = params[:user_id]
     account_id  = params[:account_id]
 
-    if user.admin? && !current_user?(user) && current_user.admin?
-      flash_access_denied
-    else
-      # To stop bot after 10 seconds if bot destroyed in short period of time after 'run' request
-      Thread.new do
-        sleep 10
-        @bot.stop
-      end
+    # To stop bot after 10 seconds if bot destroyed in short period of time after 'run' request
+    Thread.new do
+      sleep 10
+      @bot.stop
+    end
 
-      @bot.destroy
-      if account_id.nil?
-        redirect_to user_bots_path(user.id), :flash => { :success => 'Bot was successfully destroyed.' }
-      else
-        redirect_to user_account_bots_path(user.id, account_id), 
-              :flash => { :success => 'Bot was successfully destroyed.' }
-      end
+    @bot.destroy
+    if account_id.nil?
+      redirect_to user_bots_path(user_id), :flash => { :success => 'Bot was successfully destroyed.' }
+    else
+      redirect_to user_account_bots_path(user_id, account_id), 
+            :flash => { :success => 'Bot was successfully destroyed.' }
     end
   end
 

@@ -8,21 +8,21 @@ module UsersHelper
 
   private
 
-    def authenticate
-      deny_access unless signed_in?
-    end
+    #def authenticate
+    #  deny_access unless signed_in?
+    #end
 
-    def correct_user
-      @user = User.find(params[:id])
-      if (@user.admin? || !current_user.admin?) && !current_user?(@user)
-        flash_access_denied
-      end
-    end
+    #def correct_user
+    #  @user = User.find(params[:id])
+    #  if (@user.has_role?(:admin) || !current_user.has_role?(:admin)) && !current_user?(@user)
+    #    flash_access_denied
+    #  end
+    #end
 
-    def admin_user
-      redirect_to(root_path) unless current_user.admin?
-    end
- 
+    #def admin_user
+    #  redirect_to(root_path) unless current_user.has_role?(:admin)
+    #end
+
     def check_user
       @user = User.find(params[:id])
     rescue

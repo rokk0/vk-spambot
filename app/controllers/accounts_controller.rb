@@ -1,16 +1,20 @@
 class AccountsController < ApplicationController
   include AccountsHelper
 
-  before_filter :user_access,               :only => [:edit, :update, :show, :destroy]
-  before_filter :user_access_create,        :only => [:new, :create]
+  before_filter :authenticate_user!
+  before_filter :check_account, :only => [:show, :edit, :update, :destroy]
+  #before_filter :user_access,               :only => [:edit, :update, :show, :destroy]
+  #before_filter :user_access_create,        :only => [:new, :create]
+
+  #load_and_authorize_resource
+  load_and_authorize_resource :user
+  load_and_authorize_resource :account, :through => :user
 
   def index
-    if current_user.id != params[:user_id].to_i && !current_user.admin?
-      flash_access_denied
-    else
+    #authorize! :index, @user, :message => 'Not authorized as an administrator.'
       @accounts  = User.find(params[:user_id]).accounts.paginate(:page => params[:page])
       @title = 'Listing accounts'
-    end
+    #end
   rescue
     flash_access_denied
   end
@@ -24,12 +28,13 @@ class AccountsController < ApplicationController
   end
 
   def edit
+    @account = Account.find(params[:id])
     @account.password = nil
     @title = 'Edit account'
   end
 
   def create
-    params[:account][:user_id] = current_user.admin? ? params[:user_id] || current_user.id : current_user.id
+    params[:account][:user_id] = current_user.has_role?(:admin) ? params[:user_id] || current_user.id : current_user.id
     @account = Account.new(params[:account])
 
     if @account.save
@@ -41,6 +46,7 @@ class AccountsController < ApplicationController
   end
 
   def update
+    @account = Account.find(params[:id])
     if @account.update_attributes(params[:account])
       redirect_to user_accounts_path(@account.user_id), :flash => { :success => 'Account was successfully updated.' }
     else
@@ -50,21 +56,18 @@ class AccountsController < ApplicationController
   end
 
   def destroy
-    user = User.find(@account.user_id)
-    if user.admin? && !current_user?(user) && current_user.admin?
-      flash_access_denied
-    else
+    @account = Account.find(params[:id])
+
+    @account.stop_bots
+
+    # To stop bots after (bots.count * 10) seconds if user destroyed in short period of time after 'run' request
+    Thread.new do
+      sleep @account.bots.count * 10
       @account.stop_bots
-
-      # To stop bots after (bots.count * 10) seconds if user destroyed in short period of time after 'run' request
-      Thread.new do
-        sleep @account.bots.count * 10
-        @account.stop_bots
-      end
-
-      @account.destroy
-      redirect_to user_accounts_path(user.id), :flash => { :success => 'Account destroyed.' }
     end
+
+    @account.destroy
+    redirect_to user_accounts_path(@account.user_id), :flash => { :success => 'Account destroyed.' }
   end
 
 end

@@ -4,7 +4,6 @@ class CreateAccounts < ActiveRecord::Migration
       t.string  :phone
       t.string  :password
       t.string  :code
-      t.boolean :approved
       t.integer :user_id
       t.integer :bots_allowed, :default => 5
 

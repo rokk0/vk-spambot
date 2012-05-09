@@ -1,4 +1,6 @@
 class Bot < ActiveRecord::Base
+  resourcify
+
   attr_accessible :account_id, :bot_type, :page, :page_title, :page_hash, :message, :count, :hours, :minutes
   attr_accessor :hours, :minutes
 

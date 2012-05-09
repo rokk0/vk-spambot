@@ -6,7 +6,7 @@
 
 <br />
 
-<% # if current_user?(@user) || current_user.admin? %>
+<% # if current_user?(@user) || current_user.has_role?(:admin) %>
   <p>
     <strong><%= model_class.human_attribute_name(:email) %>:</strong>
     <%= @user.email %>
@@ -20,12 +20,12 @@
               :class => 'btn btn-info' %>
 <% # end %>
 
-<% # if current_user?(@user) || current_user.admin? && !@user.admin? %>
+<% # if current_user?(@user) || current_user.has_role?(:admin) && !@user.has_role?(:admin) %>
   <%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
               edit_user_path(@user), :class => 'btn' %>
 <% # end %>
 
-<% # if current_user.admin? && !@user.admin? %>
+<% # if current_user.has_role?(:admin) && !@user.has_role?(:admin) %>
   <%= link_to raw("<i class='icon-trash'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
               user_path(@user),
               :method => 'delete',

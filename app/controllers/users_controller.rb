@@ -1,12 +1,19 @@
 class UsersController < ApplicationController
   include UsersHelper
 
-  before_filter :check_user,   :only => [:show, :edit, :update, :destroy]
-  before_filter :authenticate, :only => [:index, :show, :edit, :update, :destroy]
-  before_filter :correct_user, :only => [:edit, :update]
-  before_filter :admin_user,   :only => :destroy
+  before_filter :authenticate_user!, :except => [:new, :create]
+  before_filter :check_user,         :only => [:show, :edit, :update, :destroy]
+
+  load_and_authorize_resource :user
+  #load_and_authorize_resource :through => :current_user
+  skip_authorization_check :only => [:new, :create]
+
+  #before_filter :authenticate, :only => [:index, :show, :edit, :update, :destroy]
+  #before_filter :correct_user, :only => [:edit, :update]
+  #before_filter :admin_user,   :only => :destroy
 
   def index
+    #authorize! :index, @user, :message => 'Not authorized as an administrator.'
     @title = 'All users'
     @users = User.paginate(:page => params[:page])
   end
@@ -25,12 +32,10 @@ class UsersController < ApplicationController
   end
 
   def create
-    require 'pp'
-    pp params
     @user = User.new(params[:user])
-    @user.type = "FreeUser"
+
     if @user.save
-      sign_in @user unless current_user && current_user.admin?
+      sign_in @user unless current_user && current_user.has_role?(:admin)
       redirect_to @user, :flash => { :success => 'Welcome to the... dunno!' }
     else
       @title = 'Sign up'
@@ -50,7 +55,7 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    if @user.admin?
+    if @user.has_role?(:admin)
       flash = { :error => 'Administrator cannot be destroyed.' }
     else
       @user.stop_bots

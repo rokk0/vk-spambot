@@ -20,4 +20,14 @@ module ApplicationHelper
     render 'shared/_error_messages'
   end
 
+  def flash_account_not_found
+    flash.now[:error] = 'VK account not found.'
+    render 'shared/_error_messages'
+  end
+
+  def flash_bot_not_found
+    flash.now[:error] = 'Bot not found.'
+    render 'shared/_error_messages'
+  end
+
 end

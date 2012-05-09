@@ -1,4 +1,6 @@
 class Account < ActiveRecord::Base
+  resourcify
+
   attr_accessible :phone, :password, :user_id
 
   belongs_to :user
@@ -12,16 +14,17 @@ class Account < ActiveRecord::Base
 
   validates :password,  :presence     => true,
                         :confirmation => false,
-                        :length       => { :within => 6..40 },
+                        :length       => { :within => 1..40 },
                         :if           => :validate_password?
 
   validates :phone,     :presence     => true,
-                        :format       => { :with => phone_regex }
+                        :format       => { :with => phone_regex },
+                        :uniqueness   => true
 
   default_scope :order => 'accounts.created_at DESC'
 
   before_save :check_password
-  before_validation :check_phone, :check_account
+  before_validation :check_account
 
   # Trying to run all user account bots in our sinatra part
   def run_bots
@@ -69,11 +72,6 @@ class Account < ActiveRecord::Base
       self.password = Account.find(id).password if password.blank?
     end
 
-    def check_phone
-      account = Account.find_by_phone_and_approved(self.phone, true)
-      errors.add(:phone, 'has already been taken') unless account.nil? || (account.user_id == user_id unless id.nil?)
-    end
-
     def check_account
       data = {}
       account_data = attributes.except("created_at", "updated_at")
@@ -82,18 +80,10 @@ class Account < ActiveRecord::Base
       data = { :account => Encryptor.encrypt(data.to_json, :key => $secret_key) }
 
       response = RestClient.post "#{$service_url}/api/account/approve", data, { :content_type => :json, :accept => :json }
-      approve_account(JSON.parse(response))
+
+      #errors.add(:phone, 'not approved') unless (JSON.parse(response)['status'] == 'ok')
     rescue
       errors.add(:phone, 'not approved')
-    end
-
-
-    def approve_account(response)
-      if (response['status'] == 'ok')
-        self.approved = true
-      else
-        errors.add(:phone, 'not approved')
-      end
     end
 
 end

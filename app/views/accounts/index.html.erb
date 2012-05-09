@@ -30,7 +30,7 @@
           <td><%= account.phone %></td>
           <td><%= account.created_at.strftime("%d/%m/%Y") %></td>
           <td class='left'>
-            <% # if current_user?(@user) || current_user.admin? && !@user.admin? %>
+            <% # if current_user?(@user) || current_user.has_role?(:admin) && !@user.has_role?(:admin) %>
               <%= link_to raw("<i class='icon-fire'></i> Bots (#{account.bots.count})"),
                       user_account_bots_path(account.user_id, account.id),
                       :class => 'btn btn-mini btn-info' %>
@@ -53,7 +53,7 @@
   <%= will_paginate @accounts %>
 <% end %>
 
-<% # if @user && !@user.admin? && current_user.admin? || current_user?(@user) %>
+<% # if @user && !@user.has_role?(:admin) && current_user.has_role?(:admin) || current_user?(@user) %>
   <%= link_to raw("<i class='icon-arrow-left'></i> #{t('.back', :default => t("helpers.links.back"))}"),
             user_path(@user), :class => 'btn' %>
   <%= link_to t('.new', :default => t("helpers.links.new")),

@@ -1,9 +1,17 @@
 VkSpambot::Application.routes.draw do
+  authenticated :user do
+    root :to => 'pages#home'
+  end
+
   devise_for :users
 
-  resources :accounts
+  resources :users, :only => [:show, :index]
 
-  get "sessions/new"
+  # You can have the root of your site routed with "root"
+  # just remember to delete public/index.html.
+  root :to => 'pages#home'
+
+  #get 'sessions/new'
 
   resources :users do
     resources :accounts do
@@ -18,12 +26,14 @@ VkSpambot::Application.routes.draw do
   #resources :sessions, :only => [:new, :create, :destroy]
 
   devise_scope :user do
-    get "signin", :to => "devise/sessions#new"
+    get 'signin',  :to => 'devise/sessions#new'
+  #  get 'signup',  :to => 'devise/registrations#new'
+  #  get 'signout', :to => 'devise/sessions#destroy'
   end
 
-  match '/signup',  :to => 'users#new'
-  match '/signin',  :to => 'devise/sessions#new'
-  match '/signout', :to => 'devise/sessions#destroy'
+  #match '/signup',  :to => 'devise/users#new'
+  #match '/signin',  :to => 'devise/sessions#new'
+  #match '/signout', :to => 'devise/sessions#destroy'
 
   match '/contact', :to => 'pages#contact'
   match '/about',   :to => 'pages#about'
@@ -48,8 +58,6 @@ VkSpambot::Application.routes.draw do
   match '/users/:user_id/accounts/:account_id/bots/new'       => 'bots#create',  :via => :post,    :as => 'create_user_account_bot'
   match '/users/:user_id/accounts/:account_id/bots/:id/edit'  => 'bots#update',  :via => :put,     :as => 'update_user_account_bot'
   match '/users/:user_id/accounts/:account_id/bots/:id'       => 'bots#destroy', :via => :delete,  :as => 'account_destroy_bot'
-
-  root :to => 'pages#home'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -97,10 +105,6 @@ VkSpambot::Application.routes.draw do
   #     # (app/controllers/admin/products_controller.rb)
   #     resources :products
   #   end
-
-  # You can have the root of your site routed with "root"
-  # just remember to delete public/index.html.
-  root :to => 'users#index'
 
   # See how all your routes lay out with "rake routes"
 

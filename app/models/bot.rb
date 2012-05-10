@@ -9,7 +9,7 @@ class Bot < ActiveRecord::Base
   self.per_page = 10
 
   bot_type_regexp = /^(group|discussion)$/
-  page_regexp     = /^(http:\/\/)*(vk.com\/|vkontakte.ru\/).{15,25}$/
+  page_regexp     = /^(http:\/\/)*(vk.com\/|vkontakte.ru\/).{10,25}$/
 
   validates :account_id,  :presence     => true
 

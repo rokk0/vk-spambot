@@ -19,9 +19,7 @@ class BotsController < ApplicationController
   load_and_authorize_resource :bot, :through => :account, :shallow => true
 
   def index
-    if current_user.id != params[:user_id].to_i && !current_user.has_role?(:admin)
-      flash_access_denied
-    elsif params[:account_id] != nil
+    unless params[:account_id].nil?
       @bots  = Account.find(params[:account_id]).bots.paginate(:page => params[:page])
     else
       @bots  = User.find(params[:user_id]).bots.paginate(:page => params[:page])

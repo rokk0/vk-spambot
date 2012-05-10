@@ -5,7 +5,6 @@ class Ability
     user ||= User.new # guest user (not logged in)
 
     if user.has_role?(:admin)
-      can :create, :all
       can :manage, :all
     else
       can :create, Bot
@@ -14,8 +13,8 @@ class Ability
       can :manage, Account, :user_id => user.id
       can :manage, Bot,     :account => { :user => { :id => user.id } }
 
-      can :destroy, Bot,    :account => { :user_id => user.id }
-
+      cannot :index, User
+      cannot :create, User
       cannot :destroy, User
       cannot :destroy, Account
     end

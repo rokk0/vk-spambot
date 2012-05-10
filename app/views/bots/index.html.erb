@@ -1,5 +1,5 @@
 <%- model_class = Bot.new.class -%>
-<% @user        = params[:user_id] ? User.find(params[:user_id]) : current_user %>
+<% @user        = User.find(params[:user_id]) %>
 <% @account_id  = params[:account_id] %>
 
 <script>
@@ -42,23 +42,21 @@
           <td><%= bot.created_at.strftime("%d/%m/%Y") %></td>
           <td><span id="status_<%= bot.id %>" name="bot_status" class="label">N/A</span></td>
           <td class='bots_list_control left'>
-            <% # if current_user?(@user) || current_user.has_role?(:admin) && !@user.has_role?(:admin) %>
-              <%= link_to 'Run',
-                          '#',
-                          :onclick => 'run(' + bot.id.to_s + '); return false;',
-                          :class => 'btn btn-mini btn-success',
-                          :id => 'bot_' + bot.id.to_s + '_btn',
-                          :name => 'bot_btn' %>
-              <%= link_to raw("<i class='icon-eye-open'></i> #{t('.view', :default => t("helpers.links.view"))}"),
-                          @account_id.nil? ? user_bot_path(@user.id, bot) : user_account_bot_path(@user.id, @account_id, bot.id), :class => 'btn btn-mini' %>
-              <%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
-                          @account_id.nil? ? edit_user_bot_path(@user.id, bot) : edit_user_account_bot_path(@user.id, @account_id, bot.id), :class => 'btn btn-mini' %>
-              <%= link_to raw("<i class='icon-trash'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
-                          @account_id.nil? ? user_bot_path(@user.id, bot) : user_account_bot_path(@user.id, @account_id, bot.id),
-                          :method => :delete,
-                          :confirm => t("helpers.links.confirm", :default => 'Are you sure?'),
-                          :class => 'btn btn-mini btn-danger' %>
-            <% # end %>
+            <%= link_to 'Run',
+                        '#',
+                        :onclick => 'run(' + bot.id.to_s + '); return false;',
+                        :class => 'btn btn-mini btn-success',
+                        :id => 'bot_' + bot.id.to_s + '_btn',
+                        :name => 'bot_btn' %>
+            <%= link_to raw("<i class='icon-eye-open'></i> #{t('.view', :default => t("helpers.links.view"))}"),
+                        @account_id.nil? ? user_bot_path(@user.id, bot) : user_account_bot_path(@user.id, @account_id, bot.id), :class => 'btn btn-mini' %>
+            <%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
+                        @account_id.nil? ? edit_user_bot_path(@user.id, bot) : edit_user_account_bot_path(@user.id, @account_id, bot.id), :class => 'btn btn-mini' %>
+            <%= link_to raw("<i class='icon-trash'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
+                        @account_id.nil? ? user_bot_path(@user.id, bot) : user_account_bot_path(@user.id, @account_id, bot.id),
+                        :method => :delete,
+                        :confirm => t("helpers.links.confirm", :default => 'Are you sure?'),
+                        :class => 'btn btn-mini btn-danger' %>
           </td>
         </tr>
       <% end %>
@@ -68,23 +66,21 @@
   <%= will_paginate @bots %>
 <% end %>
 
-<% # if @user && !@user.has_role?(:admin) && current_user.has_role?(:admin) || current_user?(@user) %>
-  <%= link_to raw("<i class='icon-arrow-left'></i> #{t('.back', :default => t("helpers.links.back"))}"),
-            user_accounts_path(@user), :class => 'btn' %>
-  <% unless @bots.empty? %>
-    <%= link_to 'Run All',
-                '#',
-                :onclick => (@account_id.nil? ? 'run_all' : 'run_account_all') + '(); return false;',
-                :class => 'btn btn-success',
-                :id => 'run_all_btn' %>
-    <%= link_to 'Stop All',
-                '#',
-                :onclick => (@account_id.nil? ? 'stop_all' : 'stop_account_all') + '(); return false;',
-                :class => 'btn btn-danger',
-                :id => 'stop_all_btn' %>
-  <% end %>
+<%= link_to raw("<i class='icon-arrow-left'></i> #{t('.back', :default => t("helpers.links.back"))}"),
+          user_accounts_path(@user), :class => 'btn' %>
+<% unless @bots.empty? %>
+  <%= link_to 'Run All',
+              '#',
+              :onclick => (@account_id.nil? ? 'run_all' : 'run_account_all') + '(); return false;',
+              :class => 'btn btn-success',
+              :id => 'run_all_btn' %>
+  <%= link_to 'Stop All',
+              '#',
+              :onclick => (@account_id.nil? ? 'stop_all' : 'stop_account_all') + '(); return false;',
+              :class => 'btn btn-danger',
+              :id => 'stop_all_btn' %>
+<% end %>
 
-  <%= link_to t('.new', :default => t("helpers.links.new")),
-            @account_id.nil? ? new_user_bot_path(@user) : new_user_account_bot_path(@user.id, @account_id),
-            :class => 'btn btn-primary' %>
-<% # end %>
+<%= link_to t('.new', :default => t("helpers.links.new")),
+          @account_id.nil? ? new_user_bot_path(@user) : new_user_account_bot_path(@user.id, @account_id),
+          :class => 'btn btn-primary' %>

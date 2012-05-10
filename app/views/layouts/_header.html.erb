@@ -13,7 +13,7 @@
     <div class="nav-collapse">
       <ul class="nav pull-left">
         <li><%= link_to raw("<i class='icon-home'></i> Home"), user_signed_in? ? current_user : root_path %></li>
-      <% if user_signed_in? %>
+      <% if can? :index, current_user %>
         <li><%= link_to raw("<i class='icon-user'></i> Users"), users_path %></li>
       <% end %>
       <li><%= link_to raw("<i class='icon-flag'></i> Help"), help_path %></li>

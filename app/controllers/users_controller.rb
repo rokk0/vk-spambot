@@ -6,7 +6,7 @@ class UsersController < ApplicationController
 
   load_and_authorize_resource :user
 
-  #skip_authorization_check :only => [:new, :create]
+  skip_authorization_check :only => [:new, :create]
 
   def index
     @title = 'All users'
@@ -30,7 +30,6 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
 
     if @user.save
-      sign_in @user unless current_user && current_user.has_role?(:admin)
       redirect_to @user, :flash => { :success => 'Welcome to the... dunno!' }
     else
       @title = 'Sign up'

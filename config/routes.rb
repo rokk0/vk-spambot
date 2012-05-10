@@ -3,15 +3,11 @@ VkSpambot::Application.routes.draw do
     root :to => 'pages#home'
   end
 
-  devise_for :users
-
-  resources :users, :only => [:show, :index]
-
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
   root :to => 'pages#home'
 
-  #get 'sessions/new'
+  devise_for :users
 
   resources :users do
     resources :accounts do
@@ -21,19 +17,9 @@ VkSpambot::Application.routes.draw do
     resources :bots
   end
 
-  resources :bots
-  resources :accounts
-  #resources :sessions, :only => [:new, :create, :destroy]
-
   devise_scope :user do
     get 'signin',  :to => 'devise/sessions#new'
-  #  get 'signup',  :to => 'devise/registrations#new'
-  #  get 'signout', :to => 'devise/sessions#destroy'
   end
-
-  #match '/signup',  :to => 'devise/users#new'
-  #match '/signin',  :to => 'devise/sessions#new'
-  #match '/signout', :to => 'devise/sessions#destroy'
 
   match '/contact', :to => 'pages#contact'
   match '/about',   :to => 'pages#about'

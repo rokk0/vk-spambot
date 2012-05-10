@@ -1,9 +1,8 @@
-<% @user        = params[:user_id] ? User.find(params[:user_id]) : current_user %>
-<% #@user = current_user %>
+<% @user        = User.find(params[:user_id]) %>
 <% @account_id  = params[:account_id] %>
 
-<% @form_bot_path = @account_id.nil? ? create_bot_path(@user.id)  : create_user_account_bot_path(@user.id, @account_id) %>
-<% @form_bot_path = @account_id.nil? ? update_bot_path(@user.id, @bot.id)      : update_user_account_bot_path(@user.id, @account_id, @bot.id) if @bot.id %>
+<% @form_bot_path = @account_id.nil? ? create_bot_path(@user.id)          : create_user_account_bot_path(@user.id, @account_id) %>
+<% @form_bot_path = @account_id.nil? ? update_bot_path(@user.id, @bot.id) : update_user_account_bot_path(@user.id, @account_id, @bot.id) if @bot.id %>
 
 <%= form_for @bot, :url => @form_bot_path, :html => { :class => 'form-horizontal' } do |f| %>
   <% if @bot.errors.any? %>

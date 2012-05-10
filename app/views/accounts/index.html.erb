@@ -1,5 +1,5 @@
 <%- model_class = Account.new.class -%>
-<% @user = params[:user_id] ? User.find(params[:user_id]) : current_user %>
+<% @user = User.find(params[:user_id]) %>
 
 <script>
   $(document).ready(function(){
@@ -30,20 +30,20 @@
           <td><%= account.phone %></td>
           <td><%= account.created_at.strftime("%d/%m/%Y") %></td>
           <td class='left'>
-            <% # if current_user?(@user) || current_user.has_role?(:admin) && !@user.has_role?(:admin) %>
               <%= link_to raw("<i class='icon-fire'></i> Bots (#{account.bots.count})"),
                       user_account_bots_path(account.user_id, account.id),
                       :class => 'btn btn-mini btn-info' %>
               <%= link_to raw("<i class='icon-eye-open'></i> #{t('.view', :default => t("helpers.links.view"))}"),
-                          account_path(account), :class => 'btn btn-mini' %>
+                          user_account_path(account.user_id, account.id), :class => 'btn btn-mini' %>
               <%= link_to raw("<i class='icon-pencil'></i> #{t('.edit', :default => t("helpers.links.edit"))}"),
-                          edit_account_path(account), :class => 'btn btn-mini' %>
-              <%= link_to raw("<i class='icon-trash'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
-                          account_path(account),
-                          :method => :delete,
-                          :confirm => t("helpers.links.confirm", :default => 'Are you sure?'),
-                          :class => 'btn btn-mini btn-danger' %>
-            <% # end %>
+                          edit_user_account_path(account.user_id, account.id), :class => 'btn btn-mini' %>
+              <% if can? :destroy, @account %>
+                <%= link_to raw("<i class='icon-trash'></i> #{t('.destroy', :default => t("helpers.links.destroy"))}"),
+                            user_account_path(account.user_id, account.id),
+                            :method => :delete,
+                            :confirm => t("helpers.links.confirm", :default => 'Are you sure?'),
+                            :class => 'btn btn-mini btn-danger' %>
+              <% end %>
           </td>
         </tr>
       <% end %>
@@ -53,10 +53,8 @@
   <%= will_paginate @accounts %>
 <% end %>
 
-<% # if @user && !@user.has_role?(:admin) && current_user.has_role?(:admin) || current_user?(@user) %>
-  <%= link_to raw("<i class='icon-arrow-left'></i> #{t('.back', :default => t("helpers.links.back"))}"),
-            user_path(@user), :class => 'btn' %>
-  <%= link_to t('.new', :default => t("helpers.links.new")),
-            new_user_account_path(@user),
-            :class => 'btn btn-primary' %>
-<% # end %>
+<%= link_to raw("<i class='icon-arrow-left'></i> #{t('.back', :default => t("helpers.links.back"))}"),
+          user_path(@user), :class => 'btn' %>
+<%= link_to t('.new', :default => t("helpers.links.new")),
+          new_user_account_path(@user),
+          :class => 'btn btn-primary' %>

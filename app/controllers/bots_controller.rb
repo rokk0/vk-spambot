@@ -4,29 +4,19 @@ require 'encryptor'
 class BotsController < ApplicationController
   include BotsHelper
 
- # before_filter :user_access,                     :only => [:edit, :update, :show, :destroy]
-  #before_filter :user_access_create,              :only => [:new, :create]
   before_filter :authenticate_user!
 
   before_filter :check_user,                        :only => [:index, :show, :new, :create, :edit, :update, :destroy]
   before_filter :check_account,                     :only => [:index, :show, :new, :create, :edit, :update, :destroy]
   before_filter :check_bot,                         :only => [:show, :edit, :update, :destroy]
 
-
   before_filter :check_access_control,              :only => [:run, :stop]
   before_filter :check_access_control_all,          :only => [:run_all, :stop_all]
   before_filter :check_access_control_account_all,  :only => [:run_account_all, :stop_account_all]
 
-  #load_and_authorize_resource
-  #load_and_authorize_resource :account
-  #load_and_authorize_resource :user
   load_and_authorize_resource :user
-  load_and_authorize_resource :account, :through => :user, :shallow => true
-
+  load_and_authorize_resource :account
   load_and_authorize_resource :bot, :through => :account, :shallow => true
-  #load_and_authorize_resource :bot, :through => :user, :shallow => true
-  #load_and_authorize_resource :bot, :through => [:user, :account]
-
 
   def index
     if current_user.id != params[:user_id].to_i && !current_user.has_role?(:admin)

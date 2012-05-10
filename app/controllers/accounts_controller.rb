@@ -2,19 +2,16 @@ class AccountsController < ApplicationController
   include AccountsHelper
 
   before_filter :authenticate_user!
-  before_filter :check_account, :only => [:show, :edit, :update, :destroy]
-  #before_filter :user_access,               :only => [:edit, :update, :show, :destroy]
-  #before_filter :user_access_create,        :only => [:new, :create]
 
-  #load_and_authorize_resource
+  before_filter :check_user,    :only => [:index, :show, :new, :create, :edit, :update, :destroy]
+  before_filter :check_account, :only => [:show, :edit, :update, :destroy]
+
   load_and_authorize_resource :user
-  load_and_authorize_resource :account, :through => :user, :shallow => true
+  load_and_authorize_resource :account, :through => :user
 
   def index
-    #authorize! :index, @user, :message => 'Not authorized as an administrator.'
-      @accounts  = User.find(params[:user_id]).accounts.paginate(:page => params[:page])
-      @title = 'Listing accounts'
-    #end
+    @accounts  = User.find(params[:user_id]).accounts.paginate(:page => params[:page])
+    @title = 'Listing accounts'
   rescue
     flash_access_denied
   end
@@ -34,7 +31,7 @@ class AccountsController < ApplicationController
   end
 
   def create
-    params[:account][:user_id] = current_user.has_role?(:admin) ? params[:user_id] || current_user.id : current_user.id
+    params[:account][:user_id] = params[:user_id]
     @account = Account.new(params[:account])
 
     if @account.save
@@ -47,6 +44,7 @@ class AccountsController < ApplicationController
 
   def update
     @account = Account.find(params[:id])
+
     if @account.update_attributes(params[:account])
       redirect_to user_accounts_path(@account.user_id), :flash => { :success => 'Account was successfully updated.' }
     else

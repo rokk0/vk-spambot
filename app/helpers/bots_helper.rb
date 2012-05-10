@@ -20,32 +20,6 @@ module BotsHelper
       flash_bot_not_found
     end
 
-    # check user access to all information about bots except listing.
-    #def user_access
-    #  @bot = current_user.has_role?(:admin) ? Bot.find(params[:id]) : current_user.bots.find(params[:id])
-
-    #  check_user_access(@bot.account.user_id)
-
-    #rescue
-    #  flash_access_denied
-    #end
-
-    # check user access to create bots.
-    #def user_access_create
-    #  check_user_access(params[:user_id])
-    #end
-
-    # check user access to actions with bots, also return exception if user not found.
-    #def check_user_access(user_id)
-    ##  user = User.find(user_id)
-
-    ##  flash_access_denied unless !user.has_role?(:admin) && current_user.has_role?(:admin) || current_user?(user)
-
-    ##rescue
-    ##  flash_user_not_found
-    #  current_user
-    #end
-
     # check user access to run/stop bots.
     def check_access_control
       @bot = Bot.find(params[:id])

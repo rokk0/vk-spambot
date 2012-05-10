@@ -5,29 +5,19 @@ class Ability
     user ||= User.new # guest user (not logged in)
 
     if user.has_role?(:admin)
-      can :manage, :all 
+      can :create, :all
+      can :manage, :all
     else
+      can :create, Bot
+
       can :manage, User,    :id => user.id
       can :manage, Account, :user_id => user.id
-       can :create, Bot
       can :manage, Bot,     :account => { :user => { :id => user.id } }
-      #can :manage, Bot,     :account => { :user_id => user.id }
-
-      #can :manage, Bot do |bot|
-      #  p bot
-      #  bot.account.user.id == user.id
-      #end
 
       can :destroy, Bot,    :account => { :user_id => user.id }
 
       cannot :destroy, User
       cannot :destroy, Account
-
-      #can :manage, User, :manager_id => user.id
-      #cannot :manage, User, :self_managed => true
-      #can :read, Forum
-      #can :manage, Forum if user.has_role?(:manager, Forum)
-      #can :write, Forum, :id => Forum.with_role(:moderator, user).map{ |forum| forum.id }
     end
     # Define abilities for the passed in user here. For example:
     #

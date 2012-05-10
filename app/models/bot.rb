@@ -8,20 +8,31 @@ class Bot < ActiveRecord::Base
 
   self.per_page = 10
 
+  bot_type_regexp = /^(group|discussion)$/
+  page_regexp     = /^(http:\/\/)*(vk.com\/|vkontakte.ru\/).{15,25}$/
+
   validates :account_id,  :presence     => true
-  validates :bot_type,    :presence     => true
-  validates :page,        :presence     => true
+
+  validates :bot_type,    :presence     => true,
+                          :format       => { :with    => bot_type_regexp, 
+                                             :message => 'can only be group or duiscussion.' }
+
+  validates :page,        :presence     => true,
+                          :format       => { :with => page_regexp }
+
   validates :message,     :presence     => true
-  validates :hours,       :presence     => true
-  validates :minutes,     :presence     => true
 
-  validates :bot_type, :inclusion     => { :in => %w{ group discussion }, :message => 'can only be group/duiscussion.' }
+  validates :hours,       :presence     => true,
+                          :numericality => { :only_integer              => true,
+                                             :greater_than_or_equal_to  => 0, 
+                                             :less_than_or_equal_to     => 24, 
+                                             :message                   => 'can only be between 0 and 24.' }
 
-  validates :hours, :numericality     => { :only_integer => true, :message => 'can only be whole number.' }
-  validates :hours, :numericality     => { :greater_than_or_equal_to => 0, :less_than_or_equal_to => 24, :message => 'can only be between 0 and 24.' }
-
-  validates :minutes, :numericality   => { :only_integer => true, :message => 'can only be whole number.' }
-  validates :minutes, :numericality   => { :greater_than_or_equal_to => 0, :less_than_or_equal_to => 60, :message => 'can only be between 0 and 60.' }
+  validates :minutes,     :presence     => true,
+                          :numericality => { :only_integer              => true,
+                                             :greater_than_or_equal_to  => 0, 
+                                             :less_than_or_equal_to     => 60, 
+                                             :message                   => 'can only be between 0 and 60.' }
 
   default_scope :order => 'bots.created_at DESC'
 

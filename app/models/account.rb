@@ -80,8 +80,13 @@ class Account < ActiveRecord::Base
       data = { :account => Encryptor.encrypt(data.to_json, :key => $secret_key) }
 
       response = RestClient.post "#{$service_url}/api/account/approve", data, { :content_type => :json, :accept => :json }
+      parsed_response = JSON.parse(response)
 
-      errors.add(:phone, 'not approved') unless (JSON.parse(response)['status'] == 'ok')
+      # TODO: refactor,probably move this to separate function
+      self.username = parsed_response["vk_username"]
+      self.link = parsed_response["vk_profile_link"]
+
+      errors.add(:phone, 'not approved') unless (parsed_response['status'] == 'ok')
     rescue
       errors.add(:phone, 'not approved')
     end

@@ -19,7 +19,7 @@
   <div class="control-group">
     <%= f.label :account, :class => 'control-label required' %>
     <div class="controls">
-      <%= f.select :account_id, [['--select--', nil]] + @user.accounts.to_a.map { |account| [account.phone, account.id] }, :selected => @account_id || @bot.account_id %>
+      <%= f.select :account_id, [['--select--', nil]] + @user.accounts.to_a.map { |account| [account.username + " (" + account.link + ")", account.id] }, :selected => @account_id || @bot.account_id %>
     </div>
   </div>
   <div class="control-group">

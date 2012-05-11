@@ -22,6 +22,12 @@
       <%= f.password_field :password, :autocomplete => 'off', :class => 'text_field' %>
     </div>
   </div>
+  <div class="control-group">
+    <%= f.label :code, :class => 'control-label required' %>
+    <div class="controls">
+      <%= f.text_field :code, :class => 'text_field span1', :maxlength => 4 %> - last four phone number digits for GeoIP security pass
+    </div>
+  </div>
 
   <div class="control-group">
     <div class="controls">

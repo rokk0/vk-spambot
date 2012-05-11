@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
   resourcify
 
-  attr_accessible :phone, :password, :user_id
+  attr_accessible :phone, :password, :code, :user_id
 
   belongs_to :user
   has_many :bots, :dependent => :destroy
@@ -20,6 +20,10 @@ class Account < ActiveRecord::Base
   validates :phone,     :presence     => true,
                         :format       => { :with => phone_regex },
                         :uniqueness   => true
+
+  validates :code,      :presence     => true,
+                        :numericality => { :only_integer => true, :message => 'can only be whole number.' },
+                        :length       => { :is => 4, :message => 'length must be 4 digits.' }
 
   default_scope :order => 'accounts.created_at DESC'
 
@@ -55,7 +59,7 @@ class Account < ActiveRecord::Base
 
   # Check existance of global variable with VK account session on service
   def check_session
-    data = { :account => Encryptor.encrypt({:id => id, :phone => phone, :password => password}.to_json, :key => $secret_key) }
+    data = { :account => Encryptor.encrypt({:id => id, :phone => phone, :password => password, :password => code}.to_json, :key => $secret_key) }
 
     response = RestClient.post "#{$service_url}/api/account/check_session", data, { :content_type => :json, :accept => :json }
 
@@ -88,7 +92,7 @@ class Account < ActiveRecord::Base
       self.username = parsed_response['vk_username']
       self.link = parsed_response['vk_profile_link']
 
-      errors.add(:phone, 'not approved') unless (parsed_response['status'] == 'ok')
+      errors.add(:phone, "not approved (#{parsed_response['message']})") unless (parsed_response['status'] == 'ok')
     rescue
       errors.add(:phone, 'not approved')
     end

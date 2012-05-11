@@ -9,6 +9,10 @@
   <strong><%= model_class.human_attribute_name(:account) %>:</strong>
   <%= link_to @account.username.to_s.empty? ? @account.phone : @account.username, @account.link.to_s.empty? ? '#' : @account.link %>
 </p>
+<p>
+  <strong><%= model_class.human_attribute_name(:code) %>:</strong>
+  <%= @account.code %>
+</p>
 
 <%= link_to raw("<i class='icon-arrow-left'></i> #{t('.back', :default => t("helpers.links.back"))}"),
             user_accounts_path(@account.user_id), :class => 'btn' %>

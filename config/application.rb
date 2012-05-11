@@ -55,5 +55,8 @@ module VkSpambot
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.4'
+
+    # Remove this, to return field_with_error div
+    config.action_view.field_error_proc = Proc.new { |html_tag, instance| "<span class='field_with_error'>#{html_tag}</span>".html_safe }
   end
 end

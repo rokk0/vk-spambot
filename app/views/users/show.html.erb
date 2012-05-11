@@ -10,11 +10,11 @@
   <strong><%= model_class.human_attribute_name(:email) %>:</strong>
   <%= @user.email %>
 </p>
-<%= link_to raw("<i class='icon-leaf'></i> VK accounts (#{@user.accounts.count})"),
+<%= link_to raw("<i class='icon-leaf'></i> VK accounts (#{@user.accounts.count}/#{@user.accounts_allowed})"),
             user_accounts_path(@user),
             :class => 'btn btn-info' %>
 
-<%= link_to raw("<i class='icon-fire'></i> Bots (#{@user.bots.count})"),
+<%= link_to raw("<i class='icon-fire'></i> Bots (#{@user.bots.count}/#{@user.accounts.sum(:bots_allowed)})"),
             user_bots_path(@user),
             :class => 'btn btn-info' %>
 

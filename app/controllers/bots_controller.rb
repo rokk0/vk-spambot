@@ -20,9 +20,9 @@ class BotsController < ApplicationController
 
   def index
     unless params[:account_id].nil?
-      @bots  = Account.find(params[:account_id]).bots.paginate(:page => params[:page])
+      @bots  = @account.bots.paginate(:page => params[:page])
     else
-      @bots  = User.find(params[:user_id]).bots.paginate(:page => params[:page])
+      @bots  = @user.bots.paginate(:page => params[:page])
     end
 
     @title = 'Listing bots'

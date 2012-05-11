@@ -17,8 +17,10 @@
   <table class="table table-striped table-bordered centered">
     <thead>
       <tr>
-        <th>#</th>
-        <th><%= model_class.human_attribute_name(:phone) %></th>
+        <% if current_user.has_role?(:admin) %>
+          <th>#</th>
+        <% end %>
+        <th><%= model_class.human_attribute_name(:account) %></th>
         <th><%= model_class.human_attribute_name(:created_at) %></th>
         <th><%=t '.actions', :default => t("helpers.actions") %></th>
       </tr>
@@ -26,11 +28,13 @@
     <tbody>
       <% @accounts.each do |account| %>
         <tr>
-          <td><%= account.id %></td>
-          <td><%= account.phone %></td>
+          <% if current_user.has_role?(:admin) %>
+            <td><%= account.id %></td>
+          <% end %>
+          <td><%= link_to account.username.to_s.empty? ? account.phone : account.username, account.link.to_s.empty? ? '#' : account.link %></td>
           <td><%= account.created_at.strftime("%d/%m/%Y") %></td>
           <td class='left'>
-              <%= link_to raw("<i class='icon-fire'></i> Bots (#{account.bots.count})"),
+              <%= link_to raw("<i class='icon-fire'></i> Bots (#{account.bots.count}/#{account.bots_allowed})"),
                       user_account_bots_path(account.user_id, account.id),
                       :class => 'btn btn-mini btn-info' %>
               <%= link_to raw("<i class='icon-eye-open'></i> #{t('.view', :default => t("helpers.links.view"))}"),

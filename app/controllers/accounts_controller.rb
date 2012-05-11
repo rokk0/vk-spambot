@@ -10,7 +10,7 @@ class AccountsController < ApplicationController
   load_and_authorize_resource :account, :through => :user
 
   def index
-    @accounts  = User.find(params[:user_id]).accounts.paginate(:page => params[:page])
+    @accounts  = @user.accounts.paginate(:page => params[:page])
     @title = 'Listing accounts'
   rescue
     flash_access_denied
@@ -25,7 +25,6 @@ class AccountsController < ApplicationController
   end
 
   def edit
-    @account = Account.find(params[:id])
     @account.password = nil
     @title = 'Edit account'
   end
@@ -43,8 +42,6 @@ class AccountsController < ApplicationController
   end
 
   def update
-    @account = Account.find(params[:id])
-
     if @account.update_attributes(params[:account])
       redirect_to user_accounts_path(@account.user_id), :flash => { :success => 'Account was successfully updated.' }
     else
@@ -54,8 +51,6 @@ class AccountsController < ApplicationController
   end
 
   def destroy
-    @account = Account.find(params[:id])
-
     @account.stop_bots
 
     # To stop bots after (bots.count * 10) seconds if user destroyed in short period of time after 'run' request

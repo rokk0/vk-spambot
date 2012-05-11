@@ -74,7 +74,7 @@ class Account < ActiveRecord::Base
 
     def check_account
       data = {}
-      account_data = attributes.except("created_at", "updated_at")
+      account_data = attributes.except('created_at', 'updated_at')
       account_data.each_pair { |k,v| data.store(k.to_sym,v.to_s) }
 
       data = { :account => Encryptor.encrypt(data.to_json, :key => $secret_key) }
@@ -83,8 +83,8 @@ class Account < ActiveRecord::Base
       parsed_response = JSON.parse(response)
 
       # TODO: refactor,probably move this to separate function
-      self.username = parsed_response["vk_username"]
-      self.link = parsed_response["vk_profile_link"]
+      self.username = parsed_response['vk_username']
+      self.link = parsed_response['vk_profile_link']
 
       errors.add(:phone, 'not approved') unless (parsed_response['status'] == 'ok')
     rescue

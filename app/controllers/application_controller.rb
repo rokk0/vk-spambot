@@ -11,4 +11,8 @@ class ApplicationController < ActionController::Base
     flash.now[:error] = 'Access Denied'
     render 'shared/_error_messages'
   end
+
+  def not_found
+    raise ActionController::RoutingError.new('Not Found')
+  end
 end

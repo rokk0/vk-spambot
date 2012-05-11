@@ -8,6 +8,10 @@
   <%= link_to @user.name, user_bots_path(@user) %>
 </p>
 <p>
+  <strong><%= model_class.human_attribute_name(:account) %>:</strong>
+  <%= link_to @bot.account.username.to_s.empty? ? @bot.account.phone : @bot.account.username, @bot.account.link.to_s.empty? ? '#' : @bot.account.link %>
+</p>
+<p>
   <strong><%= model_class.human_attribute_name(:bot_type) %>:</strong>
   <%= @bot.bot_type %>
 </p>

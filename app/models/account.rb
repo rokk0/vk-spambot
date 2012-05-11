@@ -59,7 +59,7 @@ class Account < ActiveRecord::Base
 
   # Check existance of global variable with VK account session on service
   def check_session
-    data = { :account => Encryptor.encrypt({:id => id, :phone => phone, :password => password, :password => code}.to_json, :key => $secret_key) }
+    data = { :account => Encryptor.encrypt({:id => id, :phone => phone, :password => password, :code => code}.to_json, :key => $secret_key) }
 
     response = RestClient.post "#{$service_url}/api/account/check_session", data, { :content_type => :json, :accept => :json }
 

@@ -6,13 +6,13 @@ class BotsController < ApplicationController
 
   before_filter :authenticate_user!
 
-  before_filter :check_user,                        :only => [:index, :show, :new, :create, :edit, :update, :destroy]
-  before_filter :check_account,                     :only => [:index, :show, :new, :create, :edit, :update, :destroy]
-  before_filter :check_bot,                         :only => [:show, :edit, :update, :destroy]
+  before_filter :check_user,    :only => [:index, :show, :new, :create, :edit, :update, :destroy]
+  before_filter :check_account, :only => [:index, :show, :new, :create, :edit, :update, :destroy]
+  before_filter :check_bot,     :only => [:show, :edit, :update, :destroy]
 
-  before_filter :check_access_control,              :only => [:run, :stop]
-  before_filter :check_access_control_all,          :only => [:run_all, :stop_all]
-  before_filter :check_access_control_account_all,  :only => [:run_account_all, :stop_account_all]
+  before_filter :check_access_control,             :only => [:run, :stop]
+  before_filter :check_access_control_all,         :only => [:run_all, :stop_all]
+  before_filter :check_access_control_account_all, :only => [:run_account_all, :stop_account_all]
 
   load_and_authorize_resource :user
   load_and_authorize_resource :account
@@ -20,9 +20,9 @@ class BotsController < ApplicationController
 
   def index
     unless params[:account_id].nil?
-      @bots  = @account.bots.paginate(:page => params[:page])
+      @bots = @account.bots.paginate(:page => params[:page])
     else
-      @bots  = @user.bots.paginate(:page => params[:page])
+      @bots = @user.bots.paginate(:page => params[:page])
     end
 
     @title = 'Listing bots'
@@ -39,22 +39,23 @@ class BotsController < ApplicationController
   end
 
   def edit
-    interval      = @bot.interval.scan(/(\d+)h(\d+)m/).flatten
-    @bot.hours    = interval.first
-    @bot.minutes  = interval.second
+    interval     = @bot.interval.scan(/(\d+)h(\d+)m/).flatten
+    @bot.hours   = interval.first
+    @bot.minutes = interval.second
 
     @title = 'Edit bot'
   end
 
   def create
-    user_id     = params[:user_id]
-    account_id  = params[:account_id]
+    user_id    = params[:user_id]
+    account_id = params[:account_id]
 
     @bot = Bot.new(params[:bot])
 
     if @bot.save
       if account_id.nil?
-        redirect_to user_bots_path(user_id), :flash => { :success => 'Bot was successfully created.' }
+        redirect_to user_bots_path(user_id),
+              :flash => { :success => 'Bot was successfully created.' }
       else
         redirect_to user_account_bots_path(user_id, account_id), 
               :flash => { :success => 'Bot was successfully created.' }
@@ -66,14 +67,15 @@ class BotsController < ApplicationController
   end
 
   def update
-    user_id     = params[:user_id]
-    account_id  = params[:account_id]
+    user_id    = params[:user_id]
+    account_id = params[:account_id]
 
     if @bot.update_attributes(params[:bot])
       if account_id.nil?
-        redirect_to user_bots_path(user_id), :flash => { :success => 'Bot was successfully updated.' }
+        redirect_to user_bots_path(user_id),
+              :flash => { :success => 'Bot was successfully updated.' }
       else
-        redirect_to user_account_bots_path(user_id, account_id), 
+        redirect_to user_account_bots_path(user_id, account_id),
               :flash => { :success => 'Bot was successfully updated.' }
       end
     else
@@ -83,8 +85,8 @@ class BotsController < ApplicationController
   end
 
   def destroy
-    user_id     = params[:user_id]
-    account_id  = params[:account_id]
+    user_id    = params[:user_id]
+    account_id = params[:account_id]
 
     # To stop bot after 10 seconds if bot destroyed in short period of time after 'run' request
     Thread.new do
@@ -94,9 +96,10 @@ class BotsController < ApplicationController
 
     @bot.destroy
     if account_id.nil?
-      redirect_to user_bots_path(user_id), :flash => { :success => 'Bot was successfully destroyed.' }
+      redirect_to user_bots_path(user_id),
+            :flash => { :success => 'Bot was successfully destroyed.' }
     else
-      redirect_to user_account_bots_path(user_id, account_id), 
+      redirect_to user_account_bots_path(user_id, account_id),
             :flash => { :success => 'Bot was successfully destroyed.' }
     end
   end

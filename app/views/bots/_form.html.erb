@@ -1,6 +1,5 @@
-<% @user        = User.find(params[:user_id]) %>
-<% @account_id  = params[:account_id] %>
-
+<% @user          = User.find(params[:user_id]) %>
+<% @account_id    = params[:account_id] %>
 <% @form_bot_path = @account_id.nil? ? create_bot_path(@user.id)          : create_user_account_bot_path(@user.id, @account_id) %>
 <% @form_bot_path = @account_id.nil? ? update_bot_path(@user.id, @bot.id) : update_user_account_bot_path(@user.id, @account_id, @bot.id) if @bot.id %>
 

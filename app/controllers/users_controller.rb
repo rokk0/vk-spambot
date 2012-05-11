@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   include UsersHelper
 
   before_filter :authenticate_user!, :except => [:new, :create]
-  before_filter :check_user,         :only => [:show, :edit, :update, :destroy]
+  before_filter :check_user,         :only   => [:show, :edit, :update, :destroy]
 
   load_and_authorize_resource :user
 

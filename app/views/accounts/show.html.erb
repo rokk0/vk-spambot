@@ -1,5 +1,6 @@
 <%- model_class = @account.class -%>
-<% @user = @account.user %>
+<% @user        = @account.user %>
+
 <p>
   <strong><%= model_class.human_attribute_name(:user) %>:</strong>
   <%= link_to @user.name, user_path(@user) %>

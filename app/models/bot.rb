@@ -9,7 +9,7 @@ class Bot < ActiveRecord::Base
   self.per_page = 10
 
   bot_type_regexp = /^(group|discussion)$/
-  page_regexp     = /^(http:\/\/)*(vk.com\/|vkontakte.ru\/).{10,25}$/
+  page_regexp     = /^(http:\/\/)(vk.com\/|vkontakte.ru\/).{10,25}$/
 
   validates :account_id,  :presence     => true
 
@@ -18,21 +18,22 @@ class Bot < ActiveRecord::Base
                                              :message => 'can only be group or duiscussion.' }
 
   validates :page,        :presence     => true,
-                          :format       => { :with => page_regexp }
+                          :format       => { :with    => page_regexp ,
+                                             :message => 'must be in format http://vk.com/ or http://vkontakte.ru/, length of symbols after domain must be 10-25.' }
 
   validates :message,     :presence     => true
 
   validates :hours,       :presence     => true,
-                          :numericality => { :only_integer              => true,
-                                             :greater_than_or_equal_to  => 0, 
-                                             :less_than_or_equal_to     => 24, 
-                                             :message                   => 'can only be between 0 and 24.' }
+                          :numericality => { :only_integer             => true,
+                                             :greater_than_or_equal_to => 0, 
+                                             :less_than_or_equal_to    => 24, 
+                                             :message                  => 'can only be between 0 and 24.' }
 
   validates :minutes,     :presence     => true,
-                          :numericality => { :only_integer              => true,
-                                             :greater_than_or_equal_to  => 0, 
-                                             :less_than_or_equal_to     => 60, 
-                                             :message                   => 'can only be between 0 and 60.' }
+                          :numericality => { :only_integer             => true,
+                                             :greater_than_or_equal_to => 0, 
+                                             :less_than_or_equal_to    => 60, 
+                                             :message                  => 'can only be between 0 and 60.' }
 
   default_scope :order => 'bots.created_at DESC'
 
@@ -40,9 +41,9 @@ class Bot < ActiveRecord::Base
 
   # Go, go, go!
   def run
-    data          = {}
-    bot_data      = attributes.except('created_at', 'updated_at')
-    account_data  = account.attributes.except('id', 'created_at', 'updated_at')
+    data         = {}
+    bot_data     = attributes.except('created_at', 'updated_at')
+    account_data = account.attributes.except('id', 'created_at', 'updated_at')
 
     bot_data.each_pair { |k,v| data.store(k.to_sym,v.to_s) }
     account_data.each_pair { |k,v| data.store(k.to_sym,v.to_s) }
@@ -82,7 +83,9 @@ class Bot < ActiveRecord::Base
   end
 
   def self.check_status(user_id)
-    RestClient.get "#{$service_url}/api/user/#{user_id}/bots"
+    response = RestClient.get "#{$service_url}/api/user/#{user_id}/bots"
+
+    JSON.parse(response)
   rescue
     {}
   end

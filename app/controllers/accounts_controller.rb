@@ -10,7 +10,7 @@ class AccountsController < ApplicationController
   load_and_authorize_resource :account, :through => :user
 
   def index
-    @accounts  = @user.accounts.paginate(:page => params[:page])
+    @accounts = @user.accounts.paginate(:page => params[:page])
     @title = 'Listing accounts'
   rescue
     flash_access_denied
@@ -21,7 +21,7 @@ class AccountsController < ApplicationController
 
   def new
     @account = Account.new
-    @title = 'New account'
+    @title= 'New account'
   end
 
   def edit

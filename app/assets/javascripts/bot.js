@@ -1,11 +1,11 @@
 $(document).ready(function(){
-  get_status_interval     = 60000;
-  remove_status_interval  = 15000;
+  get_status_interval    = 60000;
+  remove_status_interval = 15000;
 
-  all_bot_status          = $('[name=bot_status]');
-  all_bot_btn             = $('[name=bot_btn]');
-  run_all_btn             = $('#run_all_btn');
-  stop_all_btn            = $('#stop_all_btn');
+  all_bot_status         = $('[name=bot_status]');
+  all_bot_btn            = $('[name=bot_btn]');
+  run_all_btn            = $('#run_all_btn');
+  stop_all_btn           = $('#stop_all_btn');
 });
 
 function get_status() {
@@ -77,8 +77,8 @@ function status_set_inverse(id, message) {
 }
 
 function change_status(id, message, default_message, label_class, btn_class, btn_text, btn_function) {
-  var bot_status  = $('#status_' + id);
-  var bot_btn     = $('#bot_' + id + '_btn');
+  var bot_status = $('#status_' + id);
+  var bot_btn    = $('#bot_' + id + '_btn');
 
   bot_status.text(message == null ? default_message : message);
   bot_status.removeClass('label-success label-important label-warning label-info label-inverse').addClass(label_class);
@@ -122,16 +122,12 @@ function show_run_result_data(result) {
   if (result.statuses != undefined) {
     for(var account_id in result.statuses){
       if (result.statuses.hasOwnProperty(account_id)){
-        if (result.statuses[account_id]['all'] != undefined) {
-          change_all_bots_status(result.statuses[account_id]['all']['message'], result.statuses[account_id]['all']['status'], 'label-important');
-        } else {
-          for(var bot_id in result.statuses[account_id]){
-            if (result.statuses[account_id].hasOwnProperty(bot_id)){
-              if (result.statuses[account_id][bot_id].page_title != undefined && result.statuses[account_id][bot_id].page_title != '') {
-                $('#link_title_' + bot_id).text(result.statuses[account_id][bot_id].page_title);
-              }
-              change_bot_status(bot_id, result.statuses[account_id][bot_id]);
+        for(var bot_id in result.statuses[account_id]){
+          if (result.statuses[account_id].hasOwnProperty(bot_id)){
+            if (result.statuses[account_id][bot_id].page_title != undefined && result.statuses[account_id][bot_id].page_title != '') {
+              $('#link_title_' + bot_id).text(result.statuses[account_id][bot_id].page_title);
             }
+            change_bot_status(bot_id, result.statuses[account_id][bot_id]);
           }
         }
       }

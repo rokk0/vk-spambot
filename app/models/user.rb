@@ -34,17 +34,11 @@ class User < ActiveRecord::Base
 
   # Trying to run all user bots in our sinatra part
   def run_bots
-    statuses      = {}
-    working_bots  = Bot.check_status(id)
+    statuses     = {}
+    working_bots = Bot.check_status(id)
 
     accounts.each do |account|
-      session                    = account.check_session['session']
-      statuses[account.id]       = {}
-      statuses[account.id][:all] = { :status => :error, :message => 'invalid login/password' } unless session
-
-      account.bots.each do |bot|
-        statuses[account.id][bot.id] = working_bots[bot.id.to_s].nil? ? bot.run : { :status => :info, :message => 'already running' }
-      end if session
+      statuses.merge!(account.run_bots(working_bots))
     end
 
     statuses

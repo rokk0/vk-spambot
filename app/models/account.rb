@@ -27,16 +27,18 @@ class Account < ActiveRecord::Base
   before_validation :check_account
 
   # Trying to run all user account bots in our sinatra part
-  def run_bots
-    statuses     = { id => {} }
-    working_bots = Bot.check_status(user_id)
-
-    session            = check_session['session']
-    statuses[id][:all] = { :status => :error, :message => 'invalid login/password' } unless session
+  def run_bots(working_bots = nil)
+    statuses       = { id => {} }
+    working_bots ||= Bot.check_status(user_id)
+    session        = check_session['session']
 
     bots.each do |bot|
-      statuses[id][bot.id] = working_bots[bot.id.to_s].nil? ? bot.run : { :status => :info, :message => 'already running' }
-    end if session
+      if session
+        statuses[id][bot.id] = working_bots[bot.id.to_s].nil? ? bot.run : working_bots[bot.id.to_s]
+      else
+        statuses[id][bot.id] = { :status => :error, :message => 'invalid login/password' }
+      end
+    end
 
     statuses
   rescue => error

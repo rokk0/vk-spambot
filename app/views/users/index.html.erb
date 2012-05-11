@@ -1,4 +1,5 @@
 <%- model_class = User.new.class -%>
+
 <h1><%=t '.title', :default => model_class.model_name.human.pluralize %></h1>
 
 <%= will_paginate @users %>

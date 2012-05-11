@@ -2,18 +2,18 @@ class PagesController < ApplicationController
   skip_authorization_check
 
   def home
-    @title = "Home"
+    @title = 'Home'
   end
 
   def contact
-    @title = "Contact"
+    @title = 'Contact'
   end
 
   def about
-    @title = "About"
+    @title = 'About'
   end
 
   def help
-    @title = "Help"
+    @title = 'Help'
   end
 end

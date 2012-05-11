@@ -20,7 +20,7 @@ module BotsHelper
       flash_bot_not_found
     end
 
-    # check user access to run/stop bots.
+    # check user access to run/stop bots by id.
     def check_access_control
       @bot = Bot.find(params[:id])
 
@@ -40,9 +40,9 @@ module BotsHelper
 
     # check user access to run/stop all bots by account_id
     def check_access_control_account_all
-      @account  = Account.find(params[:account_id])
+      @account = Account.find(params[:account_id])
 
-      #response_access_denied unless current_user.has_role?(:admin) || current_user.id == @account.user_id
+      response_access_denied unless current_user.has_role?(:admin) || current_user.id == @account.user_id
     rescue
       response_access_denied
     end

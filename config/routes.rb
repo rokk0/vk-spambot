@@ -41,9 +41,9 @@ VkSpambot::Application.routes.draw do
   match '/users/:user_id/bots/:id/edit' => 'bots#update',  :via => :put,     :as => 'update_bot'
   match '/users/:user_id/bots/:id'      => 'bots#destroy', :via => :delete,  :as => 'destroy_bot'
 
-  match '/users/:user_id/accounts/:account_id/bots/new'       => 'bots#create',  :via => :post,    :as => 'create_user_account_bot'
-  match '/users/:user_id/accounts/:account_id/bots/:id/edit'  => 'bots#update',  :via => :put,     :as => 'update_user_account_bot'
-  match '/users/:user_id/accounts/:account_id/bots/:id'       => 'bots#destroy', :via => :delete,  :as => 'account_destroy_bot'
+  match '/users/:user_id/accounts/:account_id/bots/new'      => 'bots#create',  :via => :post,    :as => 'create_user_account_bot'
+  match '/users/:user_id/accounts/:account_id/bots/:id/edit' => 'bots#update',  :via => :put,     :as => 'update_user_account_bot'
+  match '/users/:user_id/accounts/:account_id/bots/:id'      => 'bots#destroy', :via => :delete,  :as => 'account_destroy_bot'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

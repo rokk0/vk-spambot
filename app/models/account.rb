@@ -27,8 +27,9 @@ class Account < ActiveRecord::Base
 
   default_scope :order => 'accounts.created_at DESC'
 
-  before_save :check_password
   before_validation :check_account
+
+  before_save :check_password
 
   # Trying to run all user account bots in our sinatra part
   def run_bots(working_bots = nil)

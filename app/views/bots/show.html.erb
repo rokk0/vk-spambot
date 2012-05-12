@@ -19,19 +19,21 @@
   <%= link_to @bot.page_title.nil? || @bot.page_title.empty? ? 'N/A' : @bot.page_title, @bot.page %>
 </p>
 <% if current_user.has_role?(:admin) %>
-	<p>
-	  <strong><%= model_class.human_attribute_name(:page_hash) %>:</strong>
-	  <%= @bot.page_hash %>
-	</p>
+  <p>
+    <strong><%= model_class.human_attribute_name(:page_hash) %>:</strong>
+    <%= @bot.page_hash %>
+  </p>
 <% end %>
 <p>
   <strong><%= model_class.human_attribute_name(:message) %>:</strong>
   <%= @bot.message %>
 </p>
-<p>
-  <strong><%= model_class.human_attribute_name(:interval) %>:</strong>
-  <%= @bot.interval %>
-</p>
+<% if @user.has_any_role? %>
+  <p>
+    <strong><%= model_class.human_attribute_name(:interval) %>:</strong>
+    <%= @bot.interval %>
+  </p>
+<% end %>
 
 <%= link_to raw("<i class='icon-arrow-left'></i> #{t('.back', :default => t("helpers.links.back"))}"),
             @account_id.nil? ? user_bots_path(@user.id) : user_account_bots_path(@user.id, @account_id), :class => 'btn' %>

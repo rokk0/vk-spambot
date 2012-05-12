@@ -37,6 +37,8 @@ class Bot < ActiveRecord::Base
 
   default_scope :order => 'bots.created_at DESC'
 
+  before_validation :set_hours_minutes
+
   before_save :set_interval
 
   # Go, go, go!
@@ -92,8 +94,17 @@ class Bot < ActiveRecord::Base
 
   private
 
+    def set_hours_minutes
+      self.hours   = 0 if hours.nil?
+      self.minutes = 0 if minutes.nil?
+    end
+
     def set_interval
-      self.interval = hours.to_i.zero? && minutes.to_i.zero? ? 0 : "#{hours}h#{minutes}m" unless hours.nil? || minutes.nil?
+      if account.user.has_any_role?
+        self.interval = hours.to_i.zero? && minutes.to_i.zero? ? 0 : "#{hours}h#{minutes}m"
+      else
+        self.interval = 0
+      end
     end
 
 end

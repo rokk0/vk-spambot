@@ -27,7 +27,9 @@
         <th><%= model_class.human_attribute_name(:account) %></th>
         <th><%= model_class.human_attribute_name(:bot_type) %></th>
         <th><%= model_class.human_attribute_name(:page) %></th>
-        <th><%= model_class.human_attribute_name(:interval) %></th>
+        <% if @user.has_any_role? %>
+          <th><%= model_class.human_attribute_name(:interval) %></th>
+        <% end %>
         <th><%= model_class.human_attribute_name(:created_at) %></th>
         <th><%= model_class.human_attribute_name(:status) %></th>
         <th><%=t '.actions', :default => t("helpers.actions") %></th>
@@ -42,7 +44,9 @@
           <td><%= link_to bot.account.username.to_s.empty? ? bot.account.phone : bot.account.username, bot.account.link.to_s.empty? ? '#' : bot.account.link %></td>
           <td><span class="label"><%= bot.bot_type %></span></td>
           <td><%= link_to bot.page_title.to_s.empty? ? 'N/A' : bot.page_title, bot.page, :id => "link_title_#{bot.id}" %></td>
-          <td><span class="badge badge-info"><%= bot.interval %></span></td>
+          <% if @user.has_any_role? %>
+            <td><span class="badge badge-info"><%= bot.interval %></span></td>
+          <% end %>
           <td><%= bot.created_at.strftime("%d/%m/%Y") %></td>
           <td><span id="status_<%= bot.id %>" name="bot_status" class="label">N/A</span></td>
           <td class='bots_list_control left'>

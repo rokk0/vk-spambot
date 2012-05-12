@@ -7,9 +7,15 @@
     </a>
     <div class="nav-collapse">
       <ul class="nav pull-left">
-        <li><%= link_to raw("<i class='icon-home'></i> Home"), user_signed_in? ? current_user : root_path %></li>
+        <li><%= link_to raw("<i class='icon-home'></i> Home"), root_path %></li>
       <% if can? :index, current_user %>
         <li><%= link_to raw("<i class='icon-user'></i> Users"), users_path %></li>
+      <% end %>
+      <% if user_signed_in? %>
+        <li><%= link_to raw("<i class='icon-leaf'></i> VK accounts (#{current_user.accounts.count}/#{current_user.accounts_allowed})"), 
+                                user_accounts_path(current_user) %></li>
+        <li><%= link_to raw("<i class='icon-fire'></i> Bots (#{current_user.bots.count}/#{current_user.accounts.sum(:bots_allowed)})"), 
+                                user_bots_path(current_user) %></li>
       <% end %>
       <li><%= link_to raw("<i class='icon-flag'></i> Help"), help_path %></li>
       
@@ -21,10 +27,7 @@
           <ul class="dropdown-menu">
             <li><%= link_to raw("<i class='icon-eye-open'></i> View"), current_user %></li>
             <li><%= link_to raw("<i class='icon-pencil'></i> Edit"), edit_user_path(current_user) %></li>
-            <li><%= link_to raw("<i class='icon-leaf'></i> VK accounts (#{current_user.accounts.count}/#{current_user.accounts_allowed})"), 
-                                user_accounts_path(current_user) %></li>
-            <li><%= link_to raw("<i class='icon-fire'></i> Bots (#{current_user.bots.count}/#{current_user.accounts.sum(:bots_allowed)})"), 
-                                user_bots_path(current_user) %></li>
+            
             <li class="divider"></li>
             <li><%= link_to raw("<i class='icon-off'></i> Sign out"), destroy_user_session_path, :method => :delete %></li>
           </ul>

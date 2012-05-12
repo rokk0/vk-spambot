@@ -1,3 +1,6 @@
+require 'eventmachine'
+require 'em-http-request'
+
 class Account < ActiveRecord::Base
   resourcify
 
@@ -36,18 +39,61 @@ class Account < ActiveRecord::Base
     statuses       = { id => {} }
     working_bots ||= Bot.check_status(user_id)
     session        = check_session['session']
+    request_data   = {}
 
     bots.each do |bot|
       if session
-        statuses[id][bot.id] = working_bots[bot.id.to_s].nil? ? bot.run : working_bots[bot.id.to_s]
+        if working_bots[bot.id.to_s].nil?
+          # Collect each bot data
+          request_data[bot.id] = bot.get_request_data
+        else
+          # Return old status if bot already running
+          statuses[id][bot.id] = working_bots[bot.id.to_s]
+        end
       else
         statuses[id][bot.id] = { :status => :error, :message => 'invalid login/password' }
       end
     end
 
+    # Collect responses from EM MultiRequest
+    statuses[id].merge!(run_multi_request(request_data))
+
     statuses
   rescue => error
     { :status => :error, :message => error.to_s }
+  end
+
+  # Initializing EventMachine with MultiRequest to grab responses asynchronously
+  def run_multi_request(request_data = {})
+    statuses = {}
+
+    unless request_data.empty?
+      EventMachine.run do
+        multi = EventMachine::MultiRequest.new
+
+        request_data.each do |bot_id, data|
+          # add multiple requests to the multi-handler 
+          http = EventMachine::HttpRequest.new("#{$service_url}/api/bot/run")
+          post = http.post :body => data
+          multi.add(post)
+        end
+
+        multi.callback do
+          multi.responses[:succeeded].each do |resp|
+            # Parse each response from service
+            response = JSON.parse(resp.response)
+            statuses[response['bot_id']] = response.reject { |k| k == 'bot_id' }
+          end
+          #p multi.responses[:failed]
+
+          EventMachine.stop
+        end
+      end
+    end
+
+    statuses
+  rescue
+    {}
   end
 
   # Trying to stop all user account bots in our sinatra part

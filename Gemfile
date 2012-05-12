@@ -2,15 +2,17 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.3'
 gem 'auto_strip_attributes', '~> 1.0'
+gem 'eventmachine'
+gem 'em-http-request'
 
 gem 'twitter-bootstrap-rails'
-
 gem 'jquery-rails'
 gem 'gravatar_image_tag'
 gem 'bootstrap-will_paginate'
 
 gem 'parseconfig'
 gem 'encryptor'
+
 gem 'devise'
 gem 'cancan'
 gem 'rolify'

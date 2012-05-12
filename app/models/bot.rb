@@ -43,6 +43,16 @@ class Bot < ActiveRecord::Base
 
   # Go, go, go!
   def run
+    data = get_request_data
+
+    response = RestClient.post "#{$service_url}/api/bot/run", data, { :content_type => :json, :accept => :json }
+
+    update_title_and_hash(response)
+  rescue => error
+    { :status => :error, :message => error.to_s }
+  end
+
+  def get_request_data
     data         = {}
     bot_data     = attributes.except('created_at', 'updated_at')
     account_data = account.attributes.except('id', 'created_at', 'updated_at')
@@ -50,13 +60,7 @@ class Bot < ActiveRecord::Base
     bot_data.each_pair { |k,v| data.store(k.to_sym,v.to_s) }
     account_data.each_pair { |k,v| data.store(k.to_sym,v.to_s) }
 
-    data = { :bot => Encryptor.encrypt(data.to_json, :key => $secret_key) }
-
-    response = RestClient.post "#{$service_url}/api/bot/run", data, { :content_type => :json, :accept => :json }
-
-    update_title_and_hash(response)
-  rescue => error
-    { :status => :error, :message => error.to_s }
+    { :bot => Encryptor.encrypt(data.to_json, :key => $secret_key) }
   end
 
   # Trying to stop the bot in our sinatra part

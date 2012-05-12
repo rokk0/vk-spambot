@@ -160,7 +160,7 @@ function run(id) {
 
         change_bot_status(id, result);
         if ($('[name=bot_btn].disabled').length == 0) {
-          unlock_action_all_btn();
+          unlock_action_all_btn(account_id == '' ? 'user' : 'account');
         }
       }
   });
@@ -187,7 +187,7 @@ function stop(id) {
       success: function(result){
         change_bot_status(id, result);
         if ($('[name=bot_btn].disabled').length == 0) {
-          unlock_action_all_btn();
+          unlock_action_all_btn(account_id == '' ? 'user' : 'account');
         }
       }
   });

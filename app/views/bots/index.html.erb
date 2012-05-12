@@ -82,11 +82,13 @@
               :onclick => (@account_id.nil? ? 'run_all' : 'run_account_all') + '(); return false;',
               :class => 'btn btn-success',
               :id => 'run_all_btn' %>
-  <%= link_to 'Stop All',
-              '#',
-              :onclick => (@account_id.nil? ? 'stop_all' : 'stop_account_all') + '(); return false;',
-              :class => 'btn btn-danger',
-              :id => 'stop_all_btn' %>
+  <% if @user.has_any_role? %>
+    <%= link_to 'Stop All',
+                '#',
+                :onclick => (@account_id.nil? ? 'stop_all' : 'stop_account_all') + '(); return false;',
+                :class => 'btn btn-danger',
+                :id => 'stop_all_btn' %>
+  <% end %>
 <% end %>
 
 <%= link_to t('.new', :default => t("helpers.links.new")),

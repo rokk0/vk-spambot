@@ -52,11 +52,6 @@ class BotsController < ApplicationController
 
     @bot = Bot.new(params[:bot])
 
-    if account_id and @bot.account.bots_allowed < @bot.account.bots.count + 1
-        return redirect_to user_bots_path(user_id),
-              :flash => { :error => 'You have too much bots' }
-    end
-
     if @bot.save
       if account_id.nil?
         redirect_to user_bots_path(user_id),

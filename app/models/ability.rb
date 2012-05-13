@@ -7,11 +7,24 @@ class Ability
     if user.has_role?(:admin)
       can :manage, :all
     else
-      can :create, Bot
-
       can :manage, User,    :id => user.id
       can :manage, Account, :user_id => user.id
       can :manage, Bot,     :account => { :user => { :id => user.id } }
+
+      can :create, Bot do
+        user = User.find(user.id)
+        account = user.accounts.first
+        account.bots.count < account.bots_allowed
+      end
+
+      #can :create, Account do
+      #  user = User.find(user.id)
+      #  require 'pp'
+      #  pp "user.accounts.count: #{user.accounts.count}"
+      #  pp "user.accounts_allowed: #{user.accounts_allowed}"
+      #  pp user.accounts.count < user.accounts_allowed
+      #  user.accounts.count < user.accounts_allowed
+      #end
 
       cannot :index, User
       cannot :create, User

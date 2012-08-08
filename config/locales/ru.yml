@@ -1,0 +1,16 @@
+ru:
+
+  common:
+    edit: "Редактировать"
+    delete: "Удалить"
+
+  header:
+    home: "Главная"
+    users: "Пользователи"
+    accounts: "Аккаунты"
+    bots: "Боты"
+    help: "Помощь"
+    settings: "Настройки"
+    sign_out: "Выйти"
+    sign_in: "Войти"
+    personal_data: "Личные данные"

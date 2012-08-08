@@ -1,41 +1,70 @@
 <div class="navbar-inner">
   <div class="container">
+
     <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </a>
+
     <div class="nav-collapse">
       <ul class="nav pull-left">
-        <li><%= link_to raw("<i class='icon-home'></i> Home"), root_path %></li>
-      <% if can? :index, current_user %>
-        <li><%= link_to raw("<i class='icon-user'></i> Users"), users_path %></li>
-      <% end %>
-      <% if user_signed_in? %>
-        <li><%= link_to raw("<i class='icon-leaf'></i> VK accounts (#{current_user.accounts.count}/#{current_user.accounts_allowed})"), 
-                                user_accounts_path(current_user) %></li>
-        <li><%= link_to raw("<i class='icon-fire'></i> Bots (#{current_user.bots.count}/#{current_user.accounts.sum(:bots_allowed)})"), 
-                                user_bots_path(current_user) %></li>
-      <% end %>
-      <li><%= link_to raw("<i class='icon-flag'></i> Help"), help_path %></li>
-      
+        <li><%= link_to raw("<i class='icon-home'></i> #{t("header.home")}"), root_path %></li>
+
+        <% if can? :index, current_user %>
+          <li>
+            <%= link_to raw("<i class='icon-user'></i> #{t("header.users")}"), users_path %>
+          </li>
+        <% end %>
+
+        <% if user_signed_in? %>
+          <li>
+            <%= link_to raw("<i class='icon-leaf'></i> #{t("header.accounts")} (#{current_user.accounts.count}/#{current_user.accounts_allowed})"), 
+              user_accounts_path(current_user) %>
+          </li>
+
+          <li><%= link_to raw("<i class='icon-fire'></i> #{t("header.bots")} (#{current_user.bots.count}/#{current_user.accounts.sum(:bots_allowed)})"), 
+                user_bots_path(current_user) %>
+          </li>
+        <% end %>
+
+        <li>
+          <%= link_to raw("<i class='icon-flag'></i> #{t("header.help")}"), help_path %>
+        </li>
+
       </ul>
+
       <ul class="nav pull-right">
       <% if user_signed_in? %>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class='icon-cog'></i> <%= current_user.name %><b class="caret"></b></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <i class='icon-cog'></i> <%= current_user.name %>
+            <b class="caret"></b>
+          </a>
+
           <ul class="dropdown-menu">
-            <li><%= link_to raw("<i class='icon-eye-open'></i> View"), current_user %></li>
-            <li><%= link_to raw("<i class='icon-pencil'></i> Edit"), edit_user_path(current_user) %></li>
-            
+            <li>
+              <%= link_to raw("<i class='icon-eye-open'></i> #{t("header.personal_data")}"), current_user %>
+            </li>
+
+            <li>
+              <%= link_to raw("<i class='icon-pencil'></i> #{t("common.edit")}"), edit_user_path(current_user) %>
+            </li>
+
             <li class="divider"></li>
-            <li><%= link_to raw("<i class='icon-off'></i> Sign out"), destroy_user_session_path, :method => :delete %></li>
+
+            <li>
+              <%= link_to raw("<i class='icon-off'></i> #{t("header.sign_out")}"), destroy_user_session_path, :method => :delete %>
+            </li>
+
           </ul>
         </li>
       <% else %>
-        <li><%= link_to "Sign in", signin_path %></li>
+        <li><%= link_to t("header.sign_in"), signin_path %></li>
       <% end %>
       </ul>
+
     </div>
+
   </div>
 </div>

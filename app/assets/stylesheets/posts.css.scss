@@ -1,11 +1,15 @@
-// Place all the styles related to the Posts controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+div#post-header {
+  padding: 0px 20px;
+}
+
+div#post-content {
+  padding: 20px;
+}
 
 .blog-entry {
   padding: 10px;
 }
 
-.blog-entry-header {
-  margin: auto 20px;
+.blog-entry-header, .blog-entry-footer {
+  margin: 10px 20px;
 }

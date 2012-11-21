@@ -1,21 +1,27 @@
 <% @posts.each do |post| %>
   <div class='row-fluid'>
     <div class='span12 blog-entry'>
+
       <div class='blog-entry-header'>
         <div class='pull-left'><h3><%= link_to post.title, post_path(post) %></h3></div>
-        <div class='pull-right'><%= post.created_at.to_formatted_s(:short) %></div>
         <div class='clearfix'></div>
       </div>
+
       <div class='blog-entry-content'>
-        <div><%= post.content %></div>
+        <div><%= post.content.html_safe %></div>
       </div>
-      <% if can? :manage, post %>
-        <div class='blog-entry-admin'>
+
+      <div class='blog-entry-footer'>
+        <div class='pull-left'><%= post.created_at.to_formatted_s(:short) %></div>
+        <% if can? :manage, post %>
+        <div class='pull-right'>
           <%= link_to t('common.edit'), edit_post_path(post), :class => 'btn btn-mini' %>
           <%= link_to t('common.delete'), post_path(post), :method => :delete,
                 :confirm => t('common.confirm'), :class => 'btn btn-mini btn-danger' %>
         </div>
-      <% end %>
+        <% end %>
+      </div>
+
     </div>
   </div>
 <% end %>

@@ -6,9 +6,10 @@ gem 'eventmachine'
 gem 'em-http-request'
 
 gem 'twitter-bootstrap-rails'
+gem 'bootstrap-wysihtml5-rails'
+gem 'bootstrap-will_paginate'
 gem 'jquery-rails'
 gem 'gravatar_image_tag'
-gem 'bootstrap-will_paginate'
 
 gem 'parseconfig'
 gem 'encryptor'

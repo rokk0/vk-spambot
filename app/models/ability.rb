@@ -7,6 +7,8 @@ class Ability
     if user.has_role?(:admin)
       can :manage, :all
     else
+      can [:read, :index], Post
+
       can :manage, User,    :id => user.id
       can :manage, Account, :user_id => user.id
       can :manage, Bot,     :account => { :user => { :id => user.id } }

@@ -1,0 +1,37 @@
+<% if user_signed_in? %>
+
+  <li class="dropdown">
+
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+      <i class='icon-cog'></i> <%= current_user.name %>
+      <b class="caret"></b>
+    </a>
+
+    <ul class="dropdown-menu">
+
+      <li><%= link_with_icon t('header.personal_data'), current_user, 'eye-open' %></li>
+
+      <li><%= link_with_icon t('common.edit'), edit_user_path(current_user), 'pencil' %></li>
+
+      <% if current_user.has_role? :admin %>
+
+        <li class="divider"></li>
+
+        <li><%= link_with_icon t('header.users'), users_path, 'user' %></li>
+
+        <li><%= link_with_icon t('admin.new_post_button'), new_post_path, 'edit' %></li>
+
+      <% end %>
+
+      <li class="divider"></li>
+
+      <li><%= link_with_icon t('header.sign_out'), destroy_user_session_path, 'off', :method => :delete %></li>
+
+    </ul>
+  </li>
+
+<% else %>
+
+  <li><%= link_to t("header.sign_in"), signin_path %></li>
+
+<% end %>

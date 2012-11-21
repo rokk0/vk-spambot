@@ -2,7 +2,9 @@ en:
 
   common:
     edit: "Edit"
+    new: "New"
     delete: "Delete"
+    confirm: "Are you sure?"
 
   header:
     home: "Home"
@@ -14,3 +16,6 @@ en:
     sign_out: "Sign out"
     sign_in: "Sign in"
     personal_data: "Personal data"
+
+  admin:
+    new_post_button: "New post"

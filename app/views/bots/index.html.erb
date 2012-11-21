@@ -91,7 +91,7 @@
   <% end %>
 <% end %>
 
-<% if can? :create, Bot.new %>
+<% if can? :create, Bot.new(:account_id => @account_id) %>
 	<%= link_to t('.new', :default => t("helpers.links.new")),
 			  @account_id.nil? ? new_user_bot_path(@user) : new_user_account_bot_path(@user.id, @account_id),
 			  :class => 'btn btn-primary' %>

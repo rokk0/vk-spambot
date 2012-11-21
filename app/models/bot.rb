@@ -14,7 +14,7 @@ class Bot < ActiveRecord::Base
   validates :account_id,  :presence     => true
 
   validates :bot_type,    :presence     => true,
-                          :format       => { :with    => bot_type_regexp, 
+                          :format       => { :with    => bot_type_regexp,
                                              :message => 'can only be group or duiscussion.' }
 
   validates :page,        :presence     => true,
@@ -25,14 +25,14 @@ class Bot < ActiveRecord::Base
 
   validates :hours,       :presence     => true,
                           :numericality => { :only_integer             => true,
-                                             :greater_than_or_equal_to => 0, 
-                                             :less_than_or_equal_to    => 24, 
+                                             :greater_than_or_equal_to => 0,
+                                             :less_than_or_equal_to    => 24,
                                              :message                  => 'can only be between 0 and 24.' }
 
   validates :minutes,     :presence     => true,
                           :numericality => { :only_integer             => true,
-                                             :greater_than_or_equal_to => 0, 
-                                             :less_than_or_equal_to    => 60, 
+                                             :greater_than_or_equal_to => 0,
+                                             :less_than_or_equal_to    => 60,
                                              :message                  => 'can only be between 0 and 60.' }
 
   default_scope :order => 'bots.created_at DESC'

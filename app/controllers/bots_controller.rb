@@ -57,7 +57,7 @@ class BotsController < ApplicationController
         redirect_to user_bots_path(user_id),
               :flash => { :success => 'Bot was successfully created.' }
       else
-        redirect_to user_account_bots_path(user_id, account_id), 
+        redirect_to user_account_bots_path(user_id, account_id),
               :flash => { :success => 'Bot was successfully created.' }
       end
     else

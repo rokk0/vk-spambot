@@ -72,7 +72,7 @@ class Account < ActiveRecord::Base
         multi = EventMachine::MultiRequest.new
 
         request_data.each do |bot_id, data|
-          # add multiple requests to the multi-handler 
+          # add multiple requests to the multi-handler
           http = EventMachine::HttpRequest.new("#{$service_url}/api/bot/run")
           post = http.post :body => data
           multi.add(post)
@@ -114,7 +114,7 @@ class Account < ActiveRecord::Base
   rescue => error
     { :session => false }
   end
-  
+
   private
 
     def validate_password?

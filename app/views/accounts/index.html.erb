@@ -59,6 +59,9 @@
 
 <%= link_to raw("<i class='icon-arrow-left'></i> #{t('.back', :default => t("helpers.links.back"))}"),
           user_path(@user), :class => 'btn' %>
-<%= link_to t('.new', :default => t("helpers.links.new")),
+
+<% if can? :create, Account.new %>
+  <%= link_to t('.new', :default => t("helpers.links.new")),
           new_user_account_path(@user),
           :class => 'btn btn-primary' %>
+<% end %>

@@ -18,8 +18,8 @@
   <div class="control-group">
     <%= f.label :account, :class => 'control-label required' %>
     <div class="controls">
-      <%= f.select :account_id, 
-                   [['--select--', nil]] + @user.accounts.to_a.map { |account| [account.username.to_s.empty? ? account.phone : account.username, account.id] }, 
+      <%= f.select :account_id,
+                   @user.get_valid_accounts(controller.action_name, @account_id || @bot.account_id),
                    :selected => @account_id || @bot.account_id %>
     </div>
   </div>

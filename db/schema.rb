@@ -17,6 +17,8 @@ ActiveRecord::Schema.define(:version => 20120509121110) do
     t.string   "phone"
     t.string   "password"
     t.string   "code"
+    t.string   "username"
+    t.string   "link"
     t.integer  "user_id"
     t.integer  "bots_allowed", :default => 5
     t.datetime "created_at",                  :null => false

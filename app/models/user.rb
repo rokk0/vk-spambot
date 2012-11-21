@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
   has_many :accounts, :dependent => :destroy
   has_many :bots, :through => :accounts, :dependent => :destroy
 
-  self.per_page = 10 
+  self.per_page = 10
 
   auto_strip_attributes :email
 
@@ -31,6 +31,18 @@ class User < ActiveRecord::Base
                         :if           => :validate_password?
 
   default_scope :order => 'users.created_at DESC'
+
+  # Get accounts where count of bots less than allowed and editable bot account.
+  def get_valid_accounts(action, account_id)
+    is_editing = (action == 'edit' || action == 'update')
+    valid_accounts = is_editing ? [] : [['--select--', nil]]
+
+    valid_accounts + accounts.map do |account|
+      if (is_editing && account.id == account_id.to_i) || account.bots.count < account.bots_allowed
+        [account.username.to_s.empty? ? account.phone : account.username, account.id]
+      end
+    end.compact
+  end
 
   # Trying to run all user bots in our sinatra part
   def run_bots

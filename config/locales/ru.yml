@@ -2,7 +2,9 @@ ru:
 
   common:
     edit: "Редактировать"
+    new: "Создать"
     delete: "Удалить"
+    confirm: "Уверены?"
 
   header:
     home: "Главная"
@@ -14,3 +16,6 @@ ru:
     sign_out: "Выйти"
     sign_in: "Войти"
     personal_data: "Личные данные"
+
+  admin:
+    new_post_button: "Новая запись"

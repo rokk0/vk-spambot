@@ -10,6 +10,25 @@ module ApplicationHelper
     end
   end
 
+  def link_with_icon(title, url, icon, *args)
+    link_to raw("<i class='icon-#{icon}'></i> #{title}"), url, *args
+  end
+
+  def ratio_title(type)
+    title = t "header.#{type.to_s}"
+
+    ratio = case type
+    when :bots
+      "#{current_user.bots.count}/#{current_user.accounts.sum(:bots_allowed)}"
+    when :accounts
+      "#{current_user.accounts.count}/#{current_user.accounts_allowed}"
+    else
+      raise "ApplicationHelper#ratio_title: 'type' must be :bots or :accounts"
+    end
+
+    "#{title} (#{ratio})"
+  end
+
   def flash_access_denied
     flash.now[:error] = 'Access denied.'
     render 'shared/_error_messages'

@@ -34,14 +34,5 @@ end
 group :development do
   gem 'annotate', :git => 'git://github.com/ctran/annotate_models.git'
   gem 'heroku'
-end
-
-group :test do
-  gem 'webrat', '~> 0.7'
-  gem 'factory_girl_rails', '1.0'
-end
-
-group :development, :test do
   gem 'sqlite3', '~> 1.3.6'
-  gem 'rspec-rails', '~> 2.6'
 end

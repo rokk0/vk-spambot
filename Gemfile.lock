@@ -42,6 +42,8 @@ GEM
     bcrypt-ruby (3.0.1-x86-mingw32)
     bootstrap-will_paginate (0.0.7)
       will_paginate
+    bootstrap-wysihtml5-rails (0.3.1.10)
+      railties (>= 3.0)
     builder (3.0.0)
     cancan (1.6.7)
     coderay (1.0.8)
@@ -58,7 +60,6 @@ GEM
       orm_adapter (~> 0.0.3)
       railties (~> 3.1)
       warden (~> 1.1.1)
-    diff-lcs (1.1.3)
     em-http-request (0.3.0)
       addressable (>= 2.0.0)
       escape_utils
@@ -69,10 +70,6 @@ GEM
     eventmachine (0.12.10)
     execjs (1.3.0)
       multi_json (~> 1.0)
-    factory_girl (1.3.3)
-    factory_girl_rails (1.0)
-      factory_girl (~> 1.3)
-      rails (>= 3.0.0.beta4)
     gravatar_image_tag (1.0.0)
     heroku (2.24.1)
       launchy (>= 0.3.2)
@@ -103,8 +100,6 @@ GEM
     mime-types (1.18)
     multi_json (1.2.0)
     netrc (0.7.1)
-    nokogiri (1.5.2)
-    nokogiri (1.5.2-x86-mingw32)
     orm_adapter (0.0.7)
     parseconfig (0.5.2)
     pg (0.13.2)
@@ -147,19 +142,6 @@ GEM
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rolify (3.1.0)
-    rspec (2.9.0)
-      rspec-core (~> 2.9.0)
-      rspec-expectations (~> 2.9.0)
-      rspec-mocks (~> 2.9.0)
-    rspec-core (2.9.0)
-    rspec-expectations (2.9.1)
-      diff-lcs (~> 1.1.3)
-    rspec-mocks (2.9.0)
-    rspec-rails (2.9.0)
-      actionpack (>= 3.0)
-      activesupport (>= 3.0)
-      railties (>= 3.0)
-      rspec (~> 2.9.0)
     rubyzip (0.9.7)
     sass (3.1.15)
     sass-rails (3.2.5)
@@ -190,10 +172,6 @@ GEM
       multi_json (>= 1.0.2)
     warden (1.1.1)
       rack (>= 1.0)
-    webrat (0.7.3)
-      nokogiri (>= 1.2.0)
-      rack (>= 1.0)
-      rack-test (>= 0.5.3)
     will_paginate (3.0.3)
     win32console (1.3.2-x86-mingw32)
 
@@ -205,13 +183,13 @@ DEPENDENCIES
   annotate!
   auto_strip_attributes (~> 1.0)
   bootstrap-will_paginate
+  bootstrap-wysihtml5-rails
   cancan
   coffee-rails (~> 3.2.1)
   devise
   em-http-request
   encryptor
   eventmachine
-  factory_girl_rails (= 1.0)
   gravatar_image_tag
   heroku
   jquery-rails
@@ -220,9 +198,7 @@ DEPENDENCIES
   pry
   rails (= 3.2.3)
   rolify
-  rspec-rails (~> 2.6)
   sass-rails (~> 3.2.3)
   sqlite3 (~> 1.3.6)
   twitter-bootstrap-rails
   uglifier (>= 1.0.3)
-  webrat (~> 0.7)
